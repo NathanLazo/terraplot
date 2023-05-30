@@ -1,28 +1,37 @@
-# Create T3 App
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+# TerraPlot
 
-## What's next? How do I make an app with this?
+This repository contains the source code and documentation for a plot tokenization project. The purpose of the project is to facilitate the offering of agricultural plots by producers and allow investors to rent and make investments using cryptocurrencies in the cultivation of the producer's products.
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Features
+- Producer registration: Producers can register on the platform by providing relevant information about their plots and agricultural products.
+- Plot offering: Producers can list their available plots for rent and specify the associated terms and conditions.
+- Plot visualization: Investors can explore and search for available plots on the platform, accessing details such as location, size, and associated agricultural products.
+- Investment in cultivation: Investors have the option to invest in the cultivation of agricultural products by contributing cryptocurrencies to finance the associated costs.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Comands
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+### Cloning
 
-## Learn More
+```bash
+  git clone https://github.com/NathanLazo/terraplot.git
+```
+```bash
+  cd terraplot
+```
+```bash
+  npm install
+```
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+### Run environment
+```bash
+  npm run dev
+```
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+### DB migration
+```bash
+  npx prisma db push
+```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
 
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+    
