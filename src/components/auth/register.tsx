@@ -2,11 +2,13 @@
 import type { FC } from "react";
 
 // Components
+import ConnectWallet from "../web3/connectWallet";
 
 // Utils
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 // API
 import { api } from "~/utils/api";
@@ -25,24 +27,22 @@ import { z } from "zod";
 // Validation Schema (From Zod) for React Hook Form
 const validationSchema = z
   .object({
-    firstName: z.string().min(1, { message: "First name is required" }),
-    lastName: z.string().min(1, { message: "Last name is required" }),
-    email: z.string().min(1, { message: "Email is required" }).email({
-      message: "Must be a valid email",
-    }),
+    name: z.string().min(1, { message: "First name is required" }),
     password: z
       .string()
-      .min(6, { message: "Password must be atleast 6 characters" }),
-    confirmPassword: z
-      .string()
-      .min(1, { message: "Confirm Password is required" }),
-    terms: z.literal(true, {
-      errorMap: () => ({ message: "You must accept Terms and Conditions" }),
-    }),
+      .regex(new RegExp(".*[A-Z].*"), "Debe contener una mayúscula")
+      .regex(new RegExp(".*[a-z].*"), "Debe contener una minúscula")
+      .regex(new RegExp(".*\\d.*"), "Debe contener un numero")
+      .regex(
+        new RegExp(".*[`~<>?,./!@#$%^&*()\\-_+=\"'|{}\\[\\];:\\\\].*"),
+        "Debe contener un carácter especial"
+      )
+      .min(8, "Debe ser de al menos 8 caracteres"),
+    password_confirmation: z.string(),
+    TyC: z.boolean(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Password don't match",
+  .refine((data) => data.password === data.password_confirmation, {
+    path: ["password_confirmation"],
   });
 
 // Types inferred from schema
@@ -51,6 +51,8 @@ type ValidationSchema = z.infer<typeof validationSchema>;
 const Auth: FC = () => {
   // Utils
   const router = useRouter();
+  const [publicKey, setPublicKey] = useState("");
+
   // API
   const createUser = api.useCustomAuth.signUp.useMutation();
 
@@ -64,13 +66,17 @@ const Auth: FC = () => {
   });
 
   const onSubmit: SubmitHandler<ValidationSchema> = (data) => {
+    if (!publicKey || publicKey === "") {
+      toast.error("Please connect your wallet");
+      return;
+    }
     toast
       .promise(
         createUser.mutateAsync({
-          email: data.email,
+          name: data.name,
+          wallet: publicKey,
           password: data.password,
-          name: `${data.firstName} ${data.lastName}`,
-          TyC: data.terms,
+          TyC: data.TyC,
         }),
         {
           loading: "Creating account...",
@@ -86,7 +92,7 @@ const Auth: FC = () => {
       });
   };
 
-  console.log(errors);
+  console.log("errors =>", errors);
 
   return (
     <>
@@ -118,37 +124,19 @@ const Auth: FC = () => {
               </div>
               <div className="border-b border-gray-900/10 pb-12">
                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-3">
+                  <div className="sm:col-span-6">
                     <label
-                      htmlFor="firstName"
+                      htmlFor="name"
                       className="block text-sm font-medium leading-6 text-gray-200"
                     >
-                      Primer nombre
+                      Name
                     </label>
                     <div className="mt-2">
                       <input
                         type="text"
-                        {...register("firstName")}
-                        id="firstName"
-                        autoComplete="given-firstName"
-                        className="block w-full rounded-md border-0 bg-zinc-800 bg-opacity-30 py-1.5 text-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="lastName"
-                      className="block text-sm font-medium leading-6 text-gray-200"
-                    >
-                      Apellidos
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        type="text"
-                        {...register("lastName")}
-                        id="lastName"
-                        autoComplete="family-firstName"
+                        {...register("name")}
+                        id="name"
+                        autoComplete="name"
                         className="block w-full rounded-md border-0 bg-zinc-800 bg-opacity-30 py-1.5 text-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
@@ -156,63 +144,20 @@ const Auth: FC = () => {
 
                   <div className="sm:col-span-6">
                     <label
-                      htmlFor="email"
+                      htmlFor="wallet"
                       className="block text-sm font-medium leading-6 text-gray-200"
                     >
-                      Correo
+                      Wallet
                     </label>
                     <div className="mt-2">
-                      <input
-                        id="email"
-                        {...register("email")}
-                        type="email"
-                        autoComplete="email"
-                        className="block w-full rounded-md border-0 bg-zinc-800  bg-opacity-30 py-1.5 text-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
+                      <>
+                        <ConnectWallet
+                          publicKey={publicKey}
+                          setPublicKey={setPublicKey}
+                        />
+                      </>
                     </div>
                   </div>
-                  {/* <div className="sm:col-span-2 sm:col-start-1">
-                    <label
-                      htmlFor="age"
-                      className="block text-sm font-medium leading-6 text-gray-200"
-                    >
-                      Edad
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        type="text"
-                        {...register("age")}
-                        id="age"
-                        autoComplete="age"
-                        className="block w-full rounded-md border-0 bg-zinc-800 bg-opacity-30 py-1.5 text-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="country"
-                      className="block text-sm font-medium leading-6 text-gray-200"
-                    >
-                      País
-                    </label>
-                    <div className="mt-2">
-                      <select
-                        id="country"
-                        {...register("country")}
-                        autoComplete="country-firstName"
-                        className="block w-full rounded-md border-0  bg-zinc-800 bg-opacity-30 py-1.5 text-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                      >
-                        {["Mexico", "United States", "Canada"].map(
-                          (country, index) => (
-                            <option key={index} className="bg-zinc-900 ">
-                              {country}
-                            </option>
-                          )
-                        )}
-                      </select>
-                    </div>
-                  </div> */}
                   <div className="sm:col-span-6">
                     <label
                       htmlFor="password"
@@ -239,10 +184,10 @@ const Auth: FC = () => {
                     </label>
                     <div className="mt-2">
                       <input
-                        id="confirmPassword"
-                        {...register("confirmPassword")}
+                        id="password_confirmation"
+                        {...register("password_confirmation")}
                         type="password"
-                        autoComplete="confirmPassword"
+                        autoComplete="password_confirmation"
                         className="block w-full rounded-md border-0 bg-zinc-800 bg-opacity-30 py-1.5 text-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
@@ -250,12 +195,12 @@ const Auth: FC = () => {
                   <div className=" flex w-full justify-between sm:col-span-6">
                     <div className="justify-left flex w-full items-center space-x-2">
                       <input
-                        id="terms"
-                        {...register("terms")}
+                        id="TyC"
+                        {...register("TyC")}
                         type="checkbox"
                         className="h-4 w-4 rounded border-gray-400 text-indigo-600 focus:ring-0"
                       />
-                      <label htmlFor="terms" className=" text-xs text-gray-200">
+                      <label htmlFor="TyC" className=" text-xs text-gray-200">
                         Términos y condiciones
                       </label>
                     </div>

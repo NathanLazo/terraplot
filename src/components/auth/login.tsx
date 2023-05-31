@@ -5,29 +5,28 @@ import type { FC } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useState } from "react";
 
 // Auth
 import { signIn, signOut, useSession } from "next-auth/react";
 
-// Images
+// Images/Icons
 import Image from "next/image";
 import LoginImage from "@public/images/auth/auth-login.svg";
 import { ShieldCheckIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
+
+// Components
+import ConnectWallet from "../web3/connectWallet";
 
 // Form
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowRightIcon } from "@heroicons/react/20/solid";
 
 // Validation Schema (From Zod) for React Hook Form
 const validationSchema = z.object({
-  email: z.string().min(1, { message: "Email is required" }).email({
-    message: "Must be a valid email",
-  }),
-  password: z
-    .string()
-    .min(6, { message: "Password must be atleast 6 characters" }),
+  password: z.string().nonempty({ message: "Password is required" }),
 });
 
 // Types inferred from schema
@@ -36,6 +35,7 @@ type ValidationSchema = z.infer<typeof validationSchema>;
 const Auth: FC = () => {
   // Utils
   const router = useRouter();
+  const [publicKey, setPublicKey] = useState<string>("");
 
   const session = useSession();
   console.log("🚀 ~ file: login.tsx:39 ~ session:", session);
@@ -50,21 +50,29 @@ const Auth: FC = () => {
   });
 
   const onSubmit: SubmitHandler<ValidationSchema> = (data) => {
-    toast
-      .promise(signIn("credentials", { ...data, callbackUrl: "/dashboard" }), {
-        loading: "Signing in...",
-        success: "Signed in successfully!",
-        error: "Sign in failed!",
-      })
-      .then(async () => {
-        await router.push("/auth/login");
-      })
-      .catch((error) => {
+    if (!publicKey || publicKey === "") {
+      toast.error("Please connect your wallet");
+      return;
+    }
+    const credentialsData = { wallet: publicKey, ...data };
+
+    console.log("🚀 ~ file: login.tsx:59 ~ credentialsData:", credentialsData);
+    // toast
+    //   .promise(signIn("Credentials", { credentialsData, redirect: false }), {
+    //     loading: "Signing in...",
+    //     success: "Signed in successfully!",
+    //     error: "Sign in failed!",
+    //   })
+    signIn("Credentials", { credentialsData, redirect: false }).catch(
+      (error) => {
         console.log(error);
-      });
+      }
+    );
   };
 
-  console.log("errors =>", errors);
+  if (errors.password) {
+    console.error("errors =>", errors);
+  }
 
   return (
     <>
@@ -98,19 +106,18 @@ const Auth: FC = () => {
                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div className="sm:col-span-6">
                     <label
-                      htmlFor="email"
+                      htmlFor="wallet"
                       className="block text-sm font-medium leading-6 text-gray-200"
                     >
-                      Correo
+                      Wallet
                     </label>
                     <div className="mt-2">
-                      <input
-                        id="email"
-                        {...register("email")}
-                        type="email"
-                        autoComplete="email"
-                        className="block w-full rounded-md border-0 bg-zinc-800 bg-opacity-30 py-1.5 text-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
+                      <>
+                        <ConnectWallet
+                          publicKey={publicKey}
+                          setPublicKey={setPublicKey}
+                        />
+                      </>
                     </div>
                   </div>
                   <div className="sm:col-span-6">

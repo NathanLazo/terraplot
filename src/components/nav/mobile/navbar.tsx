@@ -61,7 +61,7 @@ const navbar: FC<navbarProps> = ({ solutions }) => {
                 href="#"
                 className="text-base font-medium text-gray-300 hover:text-gray-100"
               >
-                Pricing
+                Marketplace
               </a>
 
               <a

@@ -9,7 +9,7 @@ export const useCustomAuth = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        email: z.string().email(),
+        wallet: z.string(),
         password: z
           .string()
           .regex(new RegExp(".*[A-Z].*"))
@@ -17,13 +17,13 @@ export const useCustomAuth = createTRPCRouter({
           .regex(new RegExp(".*\\d.*"))
           .regex(new RegExp(".*[`~<>?,./!@#$%^&*()\\-_+=\"'|{}\\[\\];:\\\\].*"))
           .min(8, "Must be at least 8 characters in length"),
-          TyC: z.boolean(),
-      }),
+        TyC: z.boolean(),
+      })
     )
     .mutation(async ({ ctx, input }) => {
       const exists = await ctx.prisma.user.findFirst({
         where: {
-          email: input.email,
+          wallet: input.wallet,
         },
       });
 
@@ -39,7 +39,7 @@ export const useCustomAuth = createTRPCRouter({
       const result = await ctx.prisma.user.create({
         data: {
           name: input.name,
-          email: input.email,
+          wallet: input.wallet,
           password: hashedPassword,
           TyC: input.TyC,
         },
@@ -50,7 +50,7 @@ export const useCustomAuth = createTRPCRouter({
       return {
         status: 201,
         message: "Account created successfully",
-        result: result.email,
+        result: result.wallet,
       };
     }),
 });

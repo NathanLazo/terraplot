@@ -2,16 +2,9 @@ import type { FC } from "react";
 
 import { Popover } from "@headlessui/react";
 import {
-  ArrowPathIcon,
-  BookmarkSquareIcon,
-  CalendarIcon,
-  ChartBarIcon,
-  CursorArrowRaysIcon,
-  LifebuoyIcon,
+  BanknotesIcon,
+  TruckIcon,
   PhoneIcon,
-  PlayIcon,
-  ShieldCheckIcon,
-  Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 
 import DesktopNav from "@components/nav/desktop/navbar";
@@ -19,41 +12,21 @@ import MobileNav from "@components/nav/mobile/navbar";
 
 const solutions = [
   {
-    name: "Analytics",
-    description: "Get a better review about your products.",
-    href: "/home/analytics",
-    icon: ChartBarIcon,
-  },
-  {
-    name: "Traceability",
-    description: "Speak directly to your customers in a more meaningful way.",
-    href: "/home/traceability",
-    icon: CursorArrowRaysIcon,
-  },
-  {
-    name: "Security",
-    description: "Your customers' data will be safe and secure.",
-    href: "/home/security",
-    icon: ShieldCheckIcon,
-  },
-  {
-    name: "Integrations",
-    description: "Connect with third-party tools that you're already using.",
-    href: "/home/integrations",
-    icon: Squares2X2Icon,
-  },
-  {
-    name: "Explore",
+    name: "Producers",
     description:
-      "Build strategic funnels that will drive your customers to convert",
+      "If you're a producer, we can help you get your product to market",
+    href: "/home/analytics",
+    icon: TruckIcon,
+  },
+  {
+    name: "Investors",
+    description:
+      "If you're an investor, we can help you find the right opportunity",
     href: "/home/explore",
-    icon: ArrowPathIcon,
+    icon: BanknotesIcon,
   },
 ];
-const callsToAction = [
-  { name: "Watch Demo", href: "#", icon: PlayIcon },
-  { name: "Contact Us", href: "#", icon: PhoneIcon },
-];
+const callsToAction = [{ name: "Contact Us", href: "#", icon: PhoneIcon }];
 
 const index: FC = () => {
   return (

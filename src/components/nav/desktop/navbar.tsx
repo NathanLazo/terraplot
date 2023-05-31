@@ -29,13 +29,7 @@ const navbar: FC<navbarProps> = ({ solutions, callsToAction }) => {
             href="/home/pricing"
             className="text-base font-medium text-gray-300 hover:text-gray-100"
           >
-            Pricing
-          </Link>
-          <Link
-            href="#"
-            className="text-base font-medium text-gray-300 hover:text-gray-100"
-          >
-            Docs
+            Marketplace
           </Link>
         </Popover.Group>
         <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
