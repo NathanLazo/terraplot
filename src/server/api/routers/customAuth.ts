@@ -50,7 +50,7 @@ export const useCustomAuth = createTRPCRouter({
       return {
         status: 201,
         message: "Account created successfully",
-        result: result.wallet,
+        result: result.id,
       };
     }),
 });

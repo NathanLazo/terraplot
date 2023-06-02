@@ -40,19 +40,19 @@ model Session {
 }
 
 model User {
-    id        String    @id @default(cuid())
-    name      String
-    user      String?
-    wallet    String    @unique
-    email     String?   @unique
-    image     String?
-    password  String?
-    accounts  Account[]
-    sessions  Session[]
-    isAdmin   Boolean   @default(false)
-    TyC       Boolean
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @updatedAt
+    id             String    @id @default(cuid())
+    name           String
+    user           String?
+    wallet         String    @unique
+    walletVerified DateTime?
+    image          String?
+    password       String?
+    accounts       Account[]
+    sessions       Session[]
+    isAdmin        Boolean   @default(false)
+    TyC            Boolean
+    createdAt      DateTime  @default(now())
+    updatedAt      DateTime  @updatedAt
 }
 
 model VerificationToken {

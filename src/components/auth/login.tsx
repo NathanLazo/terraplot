@@ -26,6 +26,7 @@ import { z } from "zod";
 
 // Validation Schema (From Zod) for React Hook Form
 const validationSchema = z.object({
+  wallet: z.string(),
   password: z.string().nonempty({ message: "Password is required" }),
 });
 
@@ -47,6 +48,9 @@ const Auth: FC = () => {
     formState: { errors },
   } = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
+    values: {
+      wallet: publicKey,
+    },
   });
 
   const onSubmit: SubmitHandler<ValidationSchema> = (data) => {
@@ -54,20 +58,18 @@ const Auth: FC = () => {
       toast.error("Please connect your wallet");
       return;
     }
-    const credentialsData = { wallet: publicKey, ...data };
-
-    console.log("🚀 ~ file: login.tsx:59 ~ credentialsData:", credentialsData);
-    // toast
-    //   .promise(signIn("Credentials", { credentialsData, redirect: false }), {
-    //     loading: "Signing in...",
-    //     success: "Signed in successfully!",
-    //     error: "Sign in failed!",
-    //   })
-    signIn("Credentials", { credentialsData, redirect: false }).catch(
-      (error) => {
+    toast
+      .promise(signIn("credentials", { ...data, redirect: false }), {
+        loading: "Signing in...",
+        success: "Signed in successfully!",
+        error: "Sign in failed!",
+      })
+      .then(async () => {
+        await router.push("/marketplace");
+      })
+      .catch((error) => {
         console.log(error);
-      }
-    );
+      });
   };
 
   if (errors.password) {

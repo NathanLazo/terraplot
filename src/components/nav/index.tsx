@@ -1,5 +1,7 @@
+// Types
 import type { FC } from "react";
 
+// UI
 import { Popover } from "@headlessui/react";
 import {
   BanknotesIcon,
@@ -7,6 +9,7 @@ import {
   PhoneIcon,
 } from "@heroicons/react/24/outline";
 
+// Components
 import DesktopNav from "@components/nav/desktop/navbar";
 import MobileNav from "@components/nav/mobile/navbar";
 
@@ -28,7 +31,7 @@ const solutions = [
 ];
 const callsToAction = [{ name: "Contact Us", href: "#", icon: PhoneIcon }];
 
-const index: FC = () => {
+const Index: FC = () => {
   return (
     <Popover className="relative z-50 bg-zinc-800">
       <DesktopNav solutions={solutions} callsToAction={callsToAction} />
@@ -37,4 +40,4 @@ const index: FC = () => {
     </Popover>
   );
 };
-export default index;
+export default Index;

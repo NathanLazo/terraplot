@@ -9,9 +9,9 @@ import {
   SignalIcon,
 } from "@heroicons/react/24/outline";
 
-interface desktopNavProps {}
+// interface desktopNavProps {}
 
-const desktopNav: FC<desktopNavProps> = ({}) => {
+const desktopNav: FC /*<desktopNavProps>*/ = ({}) => {
   const navigation = [
     { name: "Projects", href: "#", icon: FolderIcon, current: false },
     { name: "Deployments", href: "#", icon: ServerIcon, current: true },
@@ -20,15 +20,11 @@ const desktopNav: FC<desktopNavProps> = ({}) => {
     { name: "Usage", href: "#", icon: ChartBarSquareIcon, current: false },
     { name: "Settings", href: "#", icon: Cog6ToothIcon, current: false },
   ];
-  const teams = [
-    { id: 1, name: "Planetaria", href: "#", initial: "P", current: false },
-    { id: 2, name: "Protocol", href: "#", initial: "P", current: false },
-    { id: 3, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-  ];
 
   function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(" ");
   }
+
   return (
     <>
       {/* Static sidebar for desktop */}
@@ -38,7 +34,7 @@ const desktopNav: FC<desktopNavProps> = ({}) => {
           <div className="flex h-16 shrink-0 items-center">
             <img
               className="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+              src="https://tailwindui.com/img/logos/mark.svg?color=green&shade=700"
               alt="Your Company"
             />
           </div>
@@ -62,31 +58,6 @@ const desktopNav: FC<desktopNavProps> = ({}) => {
                           aria-hidden="true"
                         />
                         {item.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-              <li>
-                <div className="text-xs font-semibold leading-6 text-gray-400">
-                  Your teams
-                </div>
-                <ul role="list" className="-mx-2 mt-2 space-y-1">
-                  {teams.map((team) => (
-                    <li key={team.name}>
-                      <a
-                        href={team.href}
-                        className={classNames(
-                          team.current
-                            ? "bg-gray-800 text-white"
-                            : "text-gray-400 hover:bg-gray-800 hover:text-white",
-                          "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
-                        )}
-                      >
-                        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white">
-                          {team.initial}
-                        </span>
-                        <span className="truncate">{team.name}</span>
                       </a>
                     </li>
                   ))}

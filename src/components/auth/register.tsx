@@ -28,6 +28,7 @@ import { z } from "zod";
 const validationSchema = z
   .object({
     name: z.string().min(1, { message: "First name is required" }),
+    wallet: z.string(),
     password: z
       .string()
       .regex(new RegExp(".*[A-Z].*"), "Debe contener una mayúscula")
@@ -43,6 +44,7 @@ const validationSchema = z
   })
   .refine((data) => data.password === data.password_confirmation, {
     path: ["password_confirmation"],
+    message: "Passwords don't match",
   });
 
 // Types inferred from schema
@@ -63,6 +65,9 @@ const Auth: FC = () => {
     formState: { errors },
   } = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
+    values: {
+      wallet: publicKey,
+    },
   });
 
   const onSubmit: SubmitHandler<ValidationSchema> = (data) => {
@@ -74,7 +79,7 @@ const Auth: FC = () => {
       .promise(
         createUser.mutateAsync({
           name: data.name,
-          wallet: publicKey,
+          wallet: data.wallet,
           password: data.password,
           TyC: data.TyC,
         }),
@@ -88,11 +93,16 @@ const Auth: FC = () => {
         await router.push("/auth/login");
       })
       .catch((error) => {
-        console.log(error);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        toast.error(error.shape.message as string);
       });
   };
 
-  console.log("errors =>", errors);
+  errors.name?.message && toast.error(errors.name?.message);
+  errors.wallet?.message && toast.error(errors.wallet?.message);
+  errors.password?.message && toast.error(errors.password?.message);
+  errors.password_confirmation?.message &&
+    toast.error(errors.password_confirmation?.message);
 
   return (
     <>
@@ -137,11 +147,11 @@ const Auth: FC = () => {
                         {...register("name")}
                         id="name"
                         autoComplete="name"
+                        required
                         className="block w-full rounded-md border-0 bg-zinc-800 bg-opacity-30 py-1.5 text-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
                     </div>
                   </div>
-
                   <div className="sm:col-span-6">
                     <label
                       htmlFor="wallet"
@@ -150,12 +160,10 @@ const Auth: FC = () => {
                       Wallet
                     </label>
                     <div className="mt-2">
-                      <>
-                        <ConnectWallet
-                          publicKey={publicKey}
-                          setPublicKey={setPublicKey}
-                        />
-                      </>
+                      <ConnectWallet
+                        publicKey={publicKey}
+                        setPublicKey={setPublicKey}
+                      />
                     </div>
                   </div>
                   <div className="sm:col-span-6">
@@ -170,6 +178,7 @@ const Auth: FC = () => {
                         id="password"
                         {...register("password")}
                         type="password"
+                        required
                         autoComplete="password"
                         className="block w-full rounded-md border-0 bg-zinc-800 bg-opacity-30 py-1.5 text-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
@@ -187,6 +196,7 @@ const Auth: FC = () => {
                         id="password_confirmation"
                         {...register("password_confirmation")}
                         type="password"
+                        required
                         autoComplete="password_confirmation"
                         className="block w-full rounded-md border-0 bg-zinc-800 bg-opacity-30 py-1.5 text-gray-50 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       />
@@ -198,6 +208,7 @@ const Auth: FC = () => {
                         id="TyC"
                         {...register("TyC")}
                         type="checkbox"
+                        required
                         className="h-4 w-4 rounded border-gray-400 text-indigo-600 focus:ring-0"
                       />
                       <label htmlFor="TyC" className=" text-xs text-gray-200">

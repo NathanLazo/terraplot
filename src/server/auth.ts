@@ -13,8 +13,15 @@ import { verify } from "argon2";
 
 const loginSchema = z.object({
   wallet: z.string(),
-  password: z.string(),
+  password: z.string().min(6),
 });
+
+type ProfileType = {
+  sub: string;
+  name: string;
+  wallet: string;
+  picture: string;
+};
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -28,11 +35,13 @@ declare module "next-auth" {
       id: string;
       // ...other properties
       isAdmin: boolean;
+      wallet: string;
     } & DefaultSession["user"];
   }
 
   interface User {
     isAdmin: boolean;
+    wallet: string;
   }
 }
 
@@ -47,6 +56,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.isAdmin = user.isAdmin;
+        token.wallet = user.wallet;
       }
       return token;
     },
@@ -54,6 +64,7 @@ export const authOptions: NextAuthOptions = {
       if (token.id && session.user) {
         session.user.id = token.id as string;
         session.user.isAdmin = token.isAdmin as boolean;
+        session.user.wallet = token.wallet as string;
       }
       if (session.user && user) {
         session.user.id = user.id;
@@ -64,19 +75,20 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: "credentials",
       credentials: {
-        wallet: { label: "wallet", type: "text", placeholder: "wallet" },
-        password: { label: "password", type: "password" },
+        wallet: {
+          label: "Wallet",
+          type: "wallet",
+          placeholder: "jsmith@gmail.com",
+        },
+        password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        const credentialsData = await loginSchema.parseAsync(credentials);
-        console.log(credentialsData);
+        const cred = await loginSchema.parseAsync(credentials);
 
         const user = await prisma.user.findFirst({
-          where: {
-            wallet: credentialsData.wallet,
-          },
+          where: { wallet: cred.wallet },
         });
 
         if (!user) {
@@ -84,11 +96,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (user.password && user.id) {
-          const isValidPassword = await verify(
-            user.password,
-            credentialsData.password
-          );
-          console.log(isValidPassword);
+          const isValidPassword = await verify(user.password, cred.password);
 
           if (!isValidPassword) {
             return null;
@@ -97,6 +105,7 @@ export const authOptions: NextAuthOptions = {
           return {
             id: user.id,
             wallet: user.wallet,
+            user: user.id,
             name: user.name,
             isAdmin: false,
           };
@@ -112,7 +121,7 @@ export const authOptions: NextAuthOptions = {
     error: "/",
   },
   session: { strategy: "jwt" },
-  debug: true,
+  // debug: true
 };
 
 /**
