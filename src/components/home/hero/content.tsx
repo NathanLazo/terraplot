@@ -22,7 +22,7 @@ const Content: FC = () => {
                     </a>
                 </div>
                 <h1 className="mt-10 text-4xl font-bold tracking-tight text-white sm:text-6xl">
-                    Trace with blockchain on demand
+                    Trace with blockchain on demandq
                 </h1>
                 <p className="mt-6 text-lg leading-8 text-gray-300">
                     Track the history of your products with our blockchain-based traceability platform. Ensure transparency and quality of the products you consume from their origin to their final destination.
