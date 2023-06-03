@@ -7,15 +7,15 @@ import {
 
 const features = [
   {
-    name: "Your data is never public",
+    name: "Sin registros",
     description:
-      "The data you upload to our platform is never public. We ensure that your data is safe and never shared with anyone.",
+      "No necesitas registrarte para usar TerraPlot. Solo necesitas una wallet web3.",
     icon: CloudArrowUpIcon,
   },
   {
-    name: "Encrypted data",
+    name: "Sin letras pequeñas",
     description:
-      "Your data is encrypted and only you can access it. We never have readable access to your data.",
+      "TerraPlot es transparente y no dependemos de un tercero para funcionar.",
     icon: LockClosedIcon,
   },
   {
@@ -62,14 +62,13 @@ export default function Example() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-indigo-600">
-            Secured data
+            Datos descentralizados
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tight text-gray-100 sm:text-4xl">
-            We take security seriously
+            Mayor privacidad, mayor seguridad, menor dependencia de terceros.
           </p>
           <p className="mt-6 text-lg leading-8 text-gray-300">
-            Our platform is built with security in mind. We use the latest
-            technologies to ensure your data is safe.
+            Gracias a la  blockchain, tus datos son solo tuyos.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
