@@ -7,7 +7,7 @@ const stats = [
 
 export default function AnalyticsComponent() {
   return (
-    <div className="relative isolate h-screen py-24 sm:py-32 ">
+    <div className="relative isolate h-full py-24 sm:py-32 ">
       <svg
         viewBox="0 0 801 1036"
         aria-hidden="true"
