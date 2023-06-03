@@ -4,30 +4,31 @@ import {
   FingerPrintIcon,
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
+console.log("Hello from the other side")
 
 const features = [
   {
     name: "Sin registros",
     description:
-      "No necesitas registrarte para usar TerraPlot. Solo necesitas una wallet web3.",
+      "No es necesario correos ni contraseñas, solo tu wallet.",
     icon: CloudArrowUpIcon,
   },
   {
     name: "Sin letras pequeñas",
     description:
-      "TerraPlot es transparente y no dependemos de un tercero para funcionar.",
+      "Transparencia total en transacciones.",
     icon: LockClosedIcon,
   },
   {
-    name: "Product's trace is only public to the end user",
+    name: "Descentralizado",
     description:
-      "QR codes are generated for each product. The information about your product can only be accessed by these codes.",
+      "Datos más seguros, accesibles, más rápidos y eficientes.",
     icon: ArrowPathIcon,
   },
   {
-    name: "Secure authentication",
+    name: "Confidencialidad total",
     description:
-      "Our procedures are designed to ensure that your data is secure. Web3 authentication is used to ensure that only you can access your data.",
+      "Encriptación de datos y transacciones de extremo a extremo. ",
     icon: FingerPrintIcon,
   },
 ];

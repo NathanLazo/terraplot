@@ -12,9 +12,9 @@ import Image from "next/image";
 
 const features = [
   {
-    name: "Trazabilidad a tiempo real.",
+    name: "Trazabilidad en tiempo real.",
     description:
-      "Podrás saber a todo tiempo lo que está pasando en tus parcelas.",
+      "Podrás saber en todo tiempo lo que está pasando en tus parcelas.",
     icon: CloudArrowUpIcon,
   },
   {
