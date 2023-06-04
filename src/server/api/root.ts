@@ -2,6 +2,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
 import { useNewsletter } from "~/server/api/routers/newsletter";
 import { useContact } from "~/server/api/routers/contact";
 import { useCustomAuth } from "./routers/customAuth";
+import { useMarketplace } from "./routers/marketplace";
 
 /**
  * This is the primary router for your server.
@@ -12,6 +13,7 @@ export const appRouter = createTRPCRouter({
   useNewsletter,
   useContact,
   useCustomAuth,
+  useMarketplace,
 });
 
 // export type definition of API

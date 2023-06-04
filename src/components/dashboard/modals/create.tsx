@@ -74,46 +74,7 @@ const CreateProduct: FC<createProductProps> = ({
   // Auth
   const { data: session } = useSession();
 
-  const listNFT = (address: string, price: number) => {
-    const myHeaders = new Headers();
-    myHeaders.append("x-api-key", "20CcwuFeQOIcfuHx");
-    myHeaders.append("Content-Type", "application/json");
-
-    const newPromise = new Promise((resolve, reject) => {
-      const raw = JSON.stringify({
-        network: "devnet",
-        marketplace_address: "FHTi7opKezjhhcv6PoP6Frt4xxQ1jEEtUUMz3nQHUJpY",
-        nft_address: address,
-        price: price,
-        seller_wallet: session?.user?.wallet as string,
-      });
-      fetch("https://api.shyft.to/sol/v1/marketplace/list", {
-        method: "POST",
-        headers: myHeaders,
-        body: raw,
-        redirect: "follow",
-      })
-        .then((response) => response.text())
-        .then((result) => {
-          console.log(result);
-          resolve(result);
-        })
-        .catch((error) => {
-          console.log(error);
-          reject(error);
-        });
-    });
-
-    toast
-      .promise(newPromise, {
-        loading: "Listando NFT...",
-        success: "NFT listado exitosamente",
-        error: "Error al listar NFT",
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  const productsMutation = api.useMarketplace.upload.useMutation();
 
   async function signAndConfirmTransactionFe(
     network: string | undefined,
@@ -203,6 +164,19 @@ const CreateProduct: FC<createProductProps> = ({
             console.log(res_trac);
           }
         })
+        .then(() => {
+          productsMutation
+            .mutateAsync({
+              name: data.name,
+              description: data.description,
+              price: data.price,
+              image: data.image[0],
+              hash: "hash",
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        })
         .catch((err) => {
           reject(err);
         });
@@ -214,9 +188,6 @@ const CreateProduct: FC<createProductProps> = ({
         success: "NFT creado exitosamente",
         error: "Error al crear NFT",
       })
-      // .then(() => {
-      //   listNFT(as string, data.price);
-      // })
       .catch((err) => {
         console.log(err);
       });

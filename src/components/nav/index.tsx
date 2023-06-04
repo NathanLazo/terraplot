@@ -18,14 +18,14 @@ const solutions = [
     name: "Producers",
     description:
       "If you're a producer, we can help you get your product to market",
-    href: "/home/analytics",
+    href: "/producer",
     icon: TruckIcon,
   },
   {
     name: "Investors",
     description:
       "If you're an investor, we can help you find the right opportunity",
-    href: "/home/explore",
+    href: "/investor",
     icon: BanknotesIcon,
   },
 ];
