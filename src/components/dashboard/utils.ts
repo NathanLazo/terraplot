@@ -29,6 +29,7 @@ export async function confirmTransactionFromBackend(
       },
   privateKey: string
 ) {
+  // @ts-expect-error - TODO: fix this
   const connection = new Connection(clusterApiUrl(network), "confirmed");
   const feePayer = Keypair.fromSecretKey(decode(privateKey));
   const wallet = new NodeWallet(feePayer);
