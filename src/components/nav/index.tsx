@@ -33,7 +33,7 @@ const callsToAction = [{ name: "Contact Us", href: "#", icon: PhoneIcon }];
 
 const Index: FC = () => {
   return (
-    <Popover className="relative z-50 bg-zinc-800">
+    <Popover className="relative z-[150] bg-zinc-800">
       <DesktopNav solutions={solutions} callsToAction={callsToAction} />
 
       <MobileNav solutions={solutions} />

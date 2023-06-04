@@ -11,7 +11,7 @@ const Dashboard: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Tlachia - dashboard</title>
+        <title>TerraPlot - dashboard</title>
       </Head>
       <DashboardComponent />
     </>

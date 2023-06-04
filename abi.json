@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "message": "Create marketplace transaction generated successfully",
+  "result": {
+    "network": "devnet",
+    "address": "FHTi7opKezjhhcv6PoP6Frt4xxQ1jEEtUUMz3nQHUJpY",
+    "fee_account": "AH7LhxxVJwSEbuYTe6vzGUGzUPSPCRTiBosyFooKzEhM",
+    "treasury_address": "Gkh4E4oXi4fG48XZ2ZE4nzSmP4fQ18S8euVAbNmXYVwQ",
+    "fee_payer": "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
+    "fee_recipient": "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
+    "fee_recipient_account": "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
+    "currency_address": "So11111111111111111111111111111111111111112",
+    "currency_symbol": "SOL",
+    "creator": "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
+    "transaction_fee": 2,
+    "authority": "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
+    "encoded_transaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAYKJSo7y+Mn6OSPn1KYIMVpNLHmBSKkTLowrJhtqR1L5QWJ2aTH8jASwyZkieHV5L17V/YY42slnAtZ4LEqaYXLQNQ7HBr1YWxtJtGjDssL3X0dMKZLbanBAgu7VCi3AHIB6hCR2D/H06KJOiPJdS4EbA48JCBBvCzWOY3wW/rK97sAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZCmWThjy6RhVk6uQTc3IVRusBUckwgna71K0qHDpCEHsGm4hX/quBhPtof2NGGMA12sQ53BrrO1WYoPAAAAAAAQan1RcZLFxRIYzJTD1K8X9Y2u4Im6H9ROPb2YoAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKlNsgdeZ5fVLt0tpoY48ueUbWYc6CZ8MJ2uAJ/HUcgUzgEGDQcAAAAAAAIBAwkEBQgP3ULyn/nOhvH///7IAAAA"
+  }
+}

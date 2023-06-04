@@ -2,53 +2,157 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { Fragment, useState } from "react";
+
+// UI
+import { type FC, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import { toast } from "react-hot-toast";
 
-import type { FC } from "react";
-import { FolderPlusIcon, PlusIcon } from "@heroicons/react/24/outline";
-import toast from "react-hot-toast";
+//typed form
+import { z } from "zod";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { ethers } from "ethers";
-import contractAbi from "@lib/abi.json";
+// API
+import { api } from "~/utils/api";
 
-interface addProps {
+// Auth
+import { useSession } from "next-auth/react";
+import axios from "axios";
+
+// image upload constraints for schema
+const MAX_FILE_SIZE = 500000;
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
+
+// Product schema and type
+const productSchema = z.object({
+  name: z.string().min(3).max(20),
+  description: z.string().optional(),
+  image: z
+    .any()
+    .refine(
+      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+      `Max file size is 5MB.`
+    )
+    .refine(
+      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      ".jpg, .jpeg, .png and .webp files are accepted."
+    ),
+  price: z.string().optional(),
+});
+type Product = z.infer<typeof productSchema>;
+
+interface createProductProps {
   createProductModalOpen: boolean;
   setCreateProductModalOpen: (value: boolean) => void;
 }
-
-const Add: FC<addProps> = ({
+const CreateProduct: FC<createProductProps> = ({
   createProductModalOpen,
   setCreateProductModalOpen,
 }) => {
-  const [name, setName] = useState<string>("");
-  const [type, setType] = useState<string>("");
-  const [breed, setBreed] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  // Auth
+  const { data: session } = useSession();
 
-  const contractAddress = "0xAFaB5a1E8a2FB06A54F4C962c7079d3B5ddA57dD";
-
-  const handleSubmit = () => {
-    (window as any).ethereum
-      .request({ method: "eth_requestAccounts" })
-      .catch((err: any) => {
-        console.log(err);
-      });
-
-    const tempProvider = new ethers.providers.Web3Provider(
-      (window as any).ethereum
+  //image upload
+  const uploadImage = async (data: File) => {
+    const imageForm = new FormData();
+    imageForm.append("file", data);
+    imageForm.append("upload_preset", "green-lemon");
+    const res = await fetch(
+      "https://api.cloudinary.com/v1_1/de2tjedpu/upload",
+      {
+        method: "POST",
+        body: imageForm,
+      }
     );
-    const signer = tempProvider.getSigner();
-    const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-    (contract as any)
-      .store(name, type, breed, description)
-      .then((result: any) => {
-        console.log(result);
-        toast.success("Transacción exitosa");
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const imageData = await res.json();
+    return imageData.secure_url as string;
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Product>({ resolver: zodResolver(productSchema) });
+
+  if (errors.name) toast.error("El nombre debe tener entre 3 y 20 caracteres");
+  if (errors.image)
+    toast.error("La imagen debe ser de tipo .jpg y no debe pesar mas de 5MB");
+
+  // handle form submit
+  const onSubmit: SubmitHandler<Product> = (data) => {
+    console.log(data);
+
+    // const image = await uploadImage(data.image[0] as File);
+    // if (!image)
+    //   return toast.error("Error al subir la imagen, inténtelo mas tarde");
+
+    const myHeaders = new Headers();
+    myHeaders.append("x-api-key", "yuNXtSyS8hhVTdkn");
+    myHeaders.append("Content-Type", "multipart/form-data");
+
+    const formData = new FormData();
+
+    const attrib = [
+      { trait_type: "speed", value: 100 },
+      { trait_type: "aggression", value: "crazy" },
+      { trait_type: "energy", value: "very high" },
+    ];
+
+    formData.append("network", "devnet");
+    formData.append("wallet", "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y");
+    formData.append("name", data.name);
+    formData.append("symbol", "TPL");
+    formData.append("description", "Hi");
+    formData.append("attributes", JSON.stringify(attrib));
+    formData.append("external_url", "https://terraplot.lat");
+    formData.append("max_supply", "0");
+    formData.append("royalty", "5");
+    formData.append("file", data.image[0] as File);
+
+    axios({
+      // Endpoint to send files
+      url: "https://api.shyft.to/sol/v1/nft/create_detach",
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "x-api-key": "Your-api-key",
+        Accept: "*/*",
+        "Access-Control-Allow-Origin": "*",
+      },
+
+      // Attaching the form data
+      data: formData,
+    })
+      // Handle the response from backend here
+      .then(async (res) => {
+        console.log(res);
+        if (res.data.success === true) {
+          // setStatus("success: Transaction Created. Signing Transactions. Please Wait.");
+          const transaction = res.data.result.encoded_transaction; //encoded transaction
+          // setSaveMinted(res.data.result.mint);
+          const ret_result = await signAndConfirmTransactionFe(
+            "devnet",
+            transaction,
+            (res) => {
+              return res;
+            }
+          ); //signing the encoded transaction
+          console.log(ret_result);
+          setDispResp(res.data);
+        }
       })
-      .catch((err: any) => {
-        console.log(err);
-        toast.error("Error en la transacción");
+
+      // Catch errors if any
+      .catch((err) => {
+        console.warn(err);
+        setStatus("success: false");
       });
   };
 
@@ -57,7 +161,7 @@ const Add: FC<addProps> = ({
       <Transition.Root show={createProductModalOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="relative z-50"
+          className="relative z-10"
           onClose={setCreateProductModalOpen}
         >
           <Transition.Child
@@ -69,7 +173,7 @@ const Add: FC<addProps> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-zinc-800 bg-opacity-75 transition-opacity" />
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -83,117 +187,88 @@ const Add: FC<addProps> = ({
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4  text-left shadow-xl transition-all  sm:w-full sm:max-w-sm">
-                  <>
-                    <form>
-                      <div className="">
-                        <div className="border-b border-gray-900/10 py-6">
-                          <div className="flex items-center justify-center">
-                            <FolderPlusIcon className="h-9 w-9 text-gray-900/50" />
-                          </div>
-                          <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                            <div className="sm:col-span-3">
-                              <label
-                                htmlFor="name"
-                                className="block text-sm font-medium leading-6 text-gray-900"
-                              >
-                                Name
-                              </label>
-                              <div className="mt-2">
-                                <input
-                                  type="text"
-                                  name="name"
-                                  onChange={(e) => {
-                                    setName(e.target.value);
-                                  }}
-                                  id="name"
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="sm:col-span-3">
-                              <label
-                                htmlFor="type"
-                                className="block text-sm font-medium leading-6 text-gray-900"
-                              >
-                                Type
-                              </label>
-                              <div className="mt-2">
-                                <input
-                                  type="text"
-                                  onChange={(e) => {
-                                    setType(e.target.value);
-                                  }}
-                                  name="type"
-                                  id="type"
-                                  autoComplete="family-name"
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="sm:col-span-4">
-                              <label
-                                htmlFor="breed"
-                                className="block text-sm font-medium leading-6 text-gray-900"
-                              >
-                                Breed
-                              </label>
-                              <div className="mt-2">
-                                <input
-                                  id="breed"
-                                  name="breed"
-                                  onChange={(e) => {
-                                    setBreed(e.target.value);
-                                  }}
-                                  type="breed"
-                                  autoComplete="breed"
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="col-span-full">
-                              <label
-                                htmlFor="about"
-                                className="block text-sm font-medium leading-6 text-gray-900"
-                              >
-                                Description
-                              </label>
-                              <div className="mt-2">
-                                <textarea
-                                  id="about"
-                                  name="about"
-                                  onChange={(e) => {
-                                    setDescription(e.target.value);
-                                  }}
-                                  rows={3}
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                  defaultValue={""}
-                                />
-                              </div>
-                              <p className="mt-3 text-sm leading-6 text-gray-600">
-                                Write a few sentences about the product.
-                              </p>
-                              <div className="mt-4 flex w-full justify-center">
-                                <button
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    handleSubmit();
-                                  }}
-                                  className="mx-auto flex w-auto items-center rounded-md bg-primary-200 px-2 py-1 text-gray-100 hover:bg-primary-100"
-                                >
-                                  <PlusIcon className="mx-auto mr-1 h-4 w-4" />
-                                  Create
-                                </button>
-                              </div>
-                            </div>
-                          </div>
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+                  {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="space-y-4">
+                      <div>
+                        <label
+                          htmlFor="product_name"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Product Name
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            {...register("name")}
+                            id="product_name"
+                            className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                            placeholder="Product name..."
+                          />
                         </div>
                       </div>
-                    </form>
-                  </>
+                      <div>
+                        <label
+                          htmlFor="product_description"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Product Description
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            {...register("description")}
+                            id="product_description"
+                            className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                            placeholder="Product description..."
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="product_image"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Product Image
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="file"
+                            {...register("image")}
+                            id="product_image"
+                            className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                            placeholder="Product description..."
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="product_price"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Product Price
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="number"
+                            {...register("price")}
+                            id="product_price"
+                            className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                            placeholder="Product description..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-5 sm:mt-6">
+                      <button
+                        type="submit"
+                        className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                      >
+                        Create
+                      </button>
+                    </div>
+                  </form>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -203,4 +278,4 @@ const Add: FC<addProps> = ({
     </>
   );
 };
-export default Add;
+export default CreateProduct;
