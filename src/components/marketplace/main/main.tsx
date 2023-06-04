@@ -35,6 +35,7 @@ const Main: FC = ({}) => {
     .catch((error) => console.log("error", error));
   return (
     <>
+      {/* @ts-expect-error - posible null */}
       <Carousel data={data} />
       <Products />
     </>
