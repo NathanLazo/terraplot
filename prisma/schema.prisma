@@ -54,6 +54,7 @@ model User {
     createdAt      DateTime   @default(now())
     updatedAt      DateTime   @updatedAt
     Producer       Producer[]
+    Product        Product[]
 }
 
 model VerificationToken {
@@ -80,12 +81,8 @@ model Contact {
     TyC     Boolean
 }
 
-// TODO: Producer registration
 model Producer {
     id        String   @id @default(cuid())
-    name      String
-    email     String
-    phone     String
     address   String
     city      String
     state     String
@@ -95,4 +92,17 @@ model Producer {
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
+
+model Product {
+    id          String   @id @default(cuid())
+    name        String
+    description String
+    image       String
+    price       Float
+    hash        String
+    userId      String
+    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 }

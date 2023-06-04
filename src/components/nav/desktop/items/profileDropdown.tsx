@@ -57,7 +57,8 @@ const profileDropdown: FC<ProfileDropdownProps> = ({ name }) => {
                   <Menu.Item>
                     {({ active }) => (
                       <a
-                        href="#"
+                        // href={`/profile/${id}`}
+                        href="/profile/index"
                         className={classNames(
                           active ? "bg-zinc-900" : "",
                           "block px-4 py-2 text-sm text-white"
@@ -83,7 +84,7 @@ const profileDropdown: FC<ProfileDropdownProps> = ({ name }) => {
                   <Menu.Item>
                     {({ active }) => (
                       <a
-                        href="#"
+                        href="/profile/settings"
                         className={classNames(
                           active ? "bg-zinc-900" : "",
                           "block px-4 py-2 text-sm text-white"

@@ -1,24 +1,20 @@
 import type { FC } from "react";
 
-import {
-  ChartBarSquareIcon,
-  Cog6ToothIcon,
-  FolderIcon,
-  GlobeAltIcon,
-  ServerIcon,
-  SignalIcon,
-} from "@heroicons/react/24/outline";
+import { ServerIcon } from "@heroicons/react/24/outline";
+
+// Utils
+import Avatar from "boring-avatars";
+
+// Auth
+import { useSession } from "next-auth/react";
 
 // interface desktopNavProps {}
 
-const desktopNav: FC /*<desktopNavProps>*/ = ({}) => {
+const DesktopNav: FC /*<desktopNavProps>*/ = ({}) => {
+  const { data: session } = useSession();
+
   const navigation = [
-    { name: "Projects", href: "#", icon: FolderIcon, current: false },
     { name: "Deployments", href: "#", icon: ServerIcon, current: true },
-    { name: "Activity", href: "#", icon: SignalIcon, current: false },
-    { name: "Domains", href: "#", icon: GlobeAltIcon, current: false },
-    { name: "Usage", href: "#", icon: ChartBarSquareIcon, current: false },
-    { name: "Settings", href: "#", icon: Cog6ToothIcon, current: false },
   ];
 
   function classNames(...classes: string[]) {
@@ -48,8 +44,8 @@ const desktopNav: FC /*<desktopNavProps>*/ = ({}) => {
                         href={item.href}
                         className={classNames(
                           item.current
-                            ? "bg-gray-800 text-white"
-                            : "text-gray-400 hover:bg-gray-800 hover:text-white",
+                            ? "bg-zinc-800 text-white"
+                            : "text-zinc-400 hover:bg-zinc-800 hover:text-white",
                           "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
                         )}
                       >
@@ -66,12 +62,19 @@ const desktopNav: FC /*<desktopNavProps>*/ = ({}) => {
               <li className="-mx-6 mt-auto">
                 <a
                   href="#"
-                  className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-gray-800"
+                  className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-zinc-800"
                 >
-                  <img
-                    className="h-8 w-8 rounded-full bg-gray-800"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
+                  <Avatar
+                    size={32}
+                    name={session?.user.name as string}
+                    variant="beam"
+                    colors={[
+                      "#2C3639",
+                      "#A2A378",
+                      "#E5F9DB",
+                      "#83764F",
+                      "#A0D8B3",
+                    ]}
                   />
                   <span className="sr-only">Your profile</span>
                   <span aria-hidden="true">Tom Cook</span>
@@ -84,4 +87,4 @@ const desktopNav: FC /*<desktopNavProps>*/ = ({}) => {
     </>
   );
 };
-export default desktopNav;
+export default DesktopNav;
