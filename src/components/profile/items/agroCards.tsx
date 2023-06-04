@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
+import Link from "next/link";
 
 const statuses = {
   "Available to buy": "text-green-700 bg-green-50 ring-green-600/20",
@@ -44,7 +46,7 @@ const projects = [
   },
 ];
 
-function classNames(...classes) {
+function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
@@ -64,6 +66,7 @@ export default function Example() {
                 </p>
                 <p
                   className={classNames(
+                    //  @ts-expect-error - posible any
                     statuses[project.status],
                     "mt-0.5 whitespace-nowrap rounded-md px-1.5 py-0.5 text-xs font-medium ring-1 ring-inset"
                   )}
@@ -76,12 +79,12 @@ export default function Example() {
               </div>
             </div>
             <div className="flex flex-none items-center gap-x-4">
-              <a
+              <Link
                 href="/marketplace/plot/123"
                 className="mb-10 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-gray-50 shadow-sm ring-1 ring-inset hover:bg-indigo-500 sm:block md:mb-auto"
               >
                 View plot<span className="sr-only">, {project.name}</span>
-              </a>
+              </Link>
             </div>
           </li>
         ))}
