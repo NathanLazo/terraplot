@@ -11,6 +11,7 @@ export const useMarketplace = createTRPCRouter({
         image: z.string(),
         price: z.number(),
         hash: z.string(),
+        userId: z.string(),
       })
     )
     .mutation(({ input, ctx }) => {
@@ -21,6 +22,11 @@ export const useMarketplace = createTRPCRouter({
           image: input.image,
           price: input.price,
           hash: input.hash,
+          user: {
+            connect: {
+              id: input.userId,
+            },
+          },
         },
       });
     }),
