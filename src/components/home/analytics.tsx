@@ -1,7 +1,7 @@
 const stats = [
   { id: 1, name: "Parcelas confiadas", value: "500+" },
-  { id: 2, name: "De comisiones por uso", value: "<1%" },
-  { id: 3, name: "Descentralizada", value: "100%" },
+  { id: 2, name: "De comisiones por uso", value: "2%" },
+  { id: 3, name: "Descentralizada", value: "100%"  },
   { id: 4, name: "Generados en Terraplot ", value: "$200K en USDC" },
 ];
 

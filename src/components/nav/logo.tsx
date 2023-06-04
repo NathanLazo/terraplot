@@ -5,7 +5,7 @@ import Link from "next/link";
 
 // Images
 import Image from "next/image";
-import Logo from "@images/logos/tlachia-black.svg";
+import Logo from "@images/logos/Terraplot.png";
 
 const logo: FC = () => {
   return (
@@ -13,7 +13,7 @@ const logo: FC = () => {
       <Link href="/">
         <span className="sr-only">Tlachia</span>
         {/* <Image className="h-8 w-auto" src={Logo as string} alt="Logo tlachia" /> */}
-        <Image className="h-8 w-auto" src={Logo as string} alt="Your Company" />
+        <Image className="h-8 w-auto" src={Logo } alt="Your Company" />
       </Link>
     </div>
   );
