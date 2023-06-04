@@ -65,6 +65,7 @@ const Auth: FC = () => {
     formState: { errors },
   } = useForm<ValidationSchema>({
     resolver: zodResolver(validationSchema),
+    // @ts-expect-error - React Hook Form default values
     values: {
       wallet: publicKey,
     },
