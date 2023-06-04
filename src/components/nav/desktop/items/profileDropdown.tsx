@@ -56,7 +56,7 @@ const profileDropdown: FC<ProfileDropdownProps> = ({ name }) => {
                 <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-zinc-800  py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <Menu.Item>
                     {({ active }) => (
-                      <a
+                      <Link
                         // href={`/profile/${id}`}
                         href="/profile/index"
                         className={classNames(
@@ -65,7 +65,7 @@ const profileDropdown: FC<ProfileDropdownProps> = ({ name }) => {
                         )}
                       >
                         🤖 Your Profile
-                      </a>
+                      </Link>
                     )}
                   </Menu.Item>
                   <Menu.Item>
@@ -83,7 +83,7 @@ const profileDropdown: FC<ProfileDropdownProps> = ({ name }) => {
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <a
+                      <Link
                         href="/profile/settings"
                         className={classNames(
                           active ? "bg-zinc-900" : "",
@@ -91,7 +91,7 @@ const profileDropdown: FC<ProfileDropdownProps> = ({ name }) => {
                         )}
                       >
                         ⚙️ Settings
-                      </a>
+                      </Link>
                     )}
                   </Menu.Item>
                   <Menu.Item>
