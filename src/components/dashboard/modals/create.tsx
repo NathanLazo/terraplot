@@ -167,6 +167,7 @@ const CreateProduct: FC<createProductProps> = ({
             };
           }
         })
+        // @ts-expect-error - just any values
         .then(({ nftAddress, image }) => {
           productsMutation
             .mutateAsync({
