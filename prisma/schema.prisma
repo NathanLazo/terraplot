@@ -83,9 +83,6 @@ model Contact {
 // TODO: Producer registration
 model Producer {
     id        String   @id @default(cuid())
-    name      String
-    email     String
-    phone     String
     address   String
     city      String
     state     String

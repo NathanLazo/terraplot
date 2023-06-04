@@ -74,22 +74,46 @@ const CreateProduct: FC<createProductProps> = ({
   // Auth
   const { data: session } = useSession();
 
-  // //image upload
-  // const uploadImage = async (data: File) => {
-  //   const imageForm = new FormData();
-  //   imageForm.append("file", data);
-  //   imageForm.append("upload_preset", "green-lemon");
-  //   const res = await fetch(
-  //     "https://api.cloudinary.com/v1_1/de2tjedpu/upload",
-  //     {
-  //       method: "POST",
-  //       body: imageForm,
-  //     }
-  //   );
-  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  //   const imageData = await res.json();
-  //   return imageData.secure_url as string;
-  // };
+  const listNFT = (address: string, price: number) => {
+    const myHeaders = new Headers();
+    myHeaders.append("x-api-key", "20CcwuFeQOIcfuHx");
+    myHeaders.append("Content-Type", "application/json");
+
+    const newPromise = new Promise((resolve, reject) => {
+      const raw = JSON.stringify({
+        network: "devnet",
+        marketplace_address: "FHTi7opKezjhhcv6PoP6Frt4xxQ1jEEtUUMz3nQHUJpY",
+        nft_address: address,
+        price: price,
+        seller_wallet: session?.user?.wallet as string,
+      });
+      fetch("https://api.shyft.to/sol/v1/marketplace/list", {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow",
+      })
+        .then((response) => response.text())
+        .then((result) => {
+          console.log(result);
+          resolve(result);
+        })
+        .catch((error) => {
+          console.log(error);
+          reject(error);
+        });
+    });
+
+    toast
+      .promise(newPromise, {
+        loading: "Listando NFT...",
+        success: "NFT listado exitosamente",
+        error: "Error al listar NFT",
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   async function signAndConfirmTransactionFe(
     network: string | undefined,
@@ -105,7 +129,6 @@ const CreateProduct: FC<createProductProps> = ({
     await phantom.connect();
     const rpcUrl = clusterApiUrl("devnet");
     const connection = new Connection(rpcUrl, "confirmed");
-    //console.log(connection.rpcEndpoint);
     const ret = await confirmTransactionFromFrontend(
       connection,
       transaction,
@@ -135,18 +158,12 @@ const CreateProduct: FC<createProductProps> = ({
 
   // handle form submit
   const onSubmit: SubmitHandler<Product> = (data) => {
-    console.log(data);
-
     const formData = new FormData();
 
-    const attrib = [
-      { trait_type: "speed", value: 100 },
-      { trait_type: "aggression", value: "crazy" },
-      { trait_type: "energy", value: "very high" },
-    ];
+    const attrib = [{ trait_type: "price", value: data.price }];
 
     formData.append("network", "devnet");
-    formData.append("wallet", "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y");
+    formData.append("wallet", session?.user?.wallet as string);
     formData.append("name", data.name);
     formData.append("symbol", "TPL");
     formData.append("description", "Hi");
@@ -156,42 +173,52 @@ const CreateProduct: FC<createProductProps> = ({
     formData.append("royalty", "5");
     formData.append("file", data.image[0] as File, "foto.png");
 
-    axios({
-      // Endpoint to send files
-      url: "https://api.shyft.to/sol/v1/nft/create_detach",
-      method: "POST",
-      headers: {
-        "Content-Type": "multipart/form-data",
-        "x-api-key": "yuNXtSyS8hhVTdkn",
-        Accept: "*/*",
-        "Access-Control-Allow-Origin": "*",
-      },
+    const newPromise = new Promise((resolve, reject) => {
+      axios({
+        // Endpoint to send files
+        url: "https://api.shyft.to/sol/v1/nft/create_detach",
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "x-api-key": "yuNXtSyS8hhVTdkn",
+          Accept: "*/*",
+          "Access-Control-Allow-Origin": "*",
+        },
 
-      // Attaching the form data
-      data: formData,
-    })
-      // Handle the response from backend here
-      .then(async (res) => {
-        console.log("🚀 ~ file: create.tsx:175 ~ .then ~ res:", res);
-        if (res.data.success === true) {
-          const transaction = res.data.result.encoded_transaction;
-          const ret_result = await signAndConfirmTransactionFe(
-            "devnet",
-            transaction,
-            () => {
-              console.log("done");
-            }
-          );
-          console.log(
-            "🚀 ~ file: create.tsx:185 ~ .then ~ ret_result:",
-            ret_result
-          );
-        }
+        // Attaching the form data
+        data: formData,
       })
+        // Handle the response from backend here
+        .then(async (res) => {
+          console.log("🚀 ~ file: create.tsx:175 ~ .then ~ res:", res);
+          if (res.data.success === true) {
+            const transaction = res.data.result.encoded_transaction;
+            const res_trac = await signAndConfirmTransactionFe(
+              "devnet",
+              transaction,
+              () => {
+                resolve("done");
+              }
+            );
+            console.log(res_trac);
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
 
-      // Catch errors if any
+    toast
+      .promise(newPromise, {
+        loading: "Creando NFT...",
+        success: "NFT creado exitosamente",
+        error: "Error al crear NFT",
+      })
+      // .then(() => {
+      //   listNFT(as string, data.price);
+      // })
       .catch((err) => {
-        console.log("🚀 ~ file: create.tsx:191 ~ err:", err);
+        console.log(err);
       });
   };
 
