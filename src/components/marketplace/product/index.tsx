@@ -1,85 +1,24 @@
-import { useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
-import { RadioGroup } from "@headlessui/react";
-import {
-  CurrencyDollarIcon,
-  GlobeAmericasIcon,
-} from "@heroicons/react/24/outline";
+import { useSession } from "next-auth/react";
 
 import { useRouter } from "next/router";
 
 const product = {
-  name: "Basic Tee",
-  price: "$35",
-  rating: 3.9,
+  name: "Plot 1",
+  price: "$3500",
+  rating: 4.0,
   reviewCount: 512,
   href: "#",
-  breadcrumbs: [
-    { id: 1, name: "Women", href: "#" },
-    { id: 2, name: "Clothing", href: "#" },
-  ],
   images: [
     {
       id: 1,
       imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/product-page-01-featured-product-shot.jpg",
-      imageAlt: "Back of women's Basic Tee in black.",
+        "https://www.researchgate.net/profile/Ignacio-Lorite/publication/39746088/figure/fig2/AS:394227977605124@1471002682630/Figura-2-Mapa-de-cultivo-mas-frecuente-en-cada-parcela-de-la-zona-estudiada-dentro-de-la.png",
+      imageAlt: "Just a plot",
       primary: true,
     },
-    {
-      id: 2,
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/product-page-01-product-shot-01.jpg",
-      imageAlt: "Side profile of women's Basic Tee in black.",
-      primary: false,
-    },
-    {
-      id: 3,
-      imageSrc:
-        "https://tailwindui.com/img/ecommerce-images/product-page-01-product-shot-02.jpg",
-      imageAlt: "Front of women's Basic Tee in black.",
-      primary: false,
-    },
-  ],
-  colors: [
-    { name: "Black", bgColor: "bg-gray-50", selectedColor: "ring-gray-50" },
-    {
-      name: "Heather Grey",
-      bgColor: "bg-gray-400",
-      selectedColor: "ring-gray-400",
-    },
-  ],
-  sizes: [
-    { name: "XXS", inStock: true },
-    { name: "XS", inStock: true },
-    { name: "S", inStock: true },
-    { name: "M", inStock: true },
-    { name: "L", inStock: true },
-    { name: "XL", inStock: false },
-  ],
-  description: `
-    <p>The Basic tee is an honest new take on a classic. The tee uses super soft, pre-shrunk cotton for true comfort and a dependable fit. They are hand cut and sewn locally, with a special dye technique that gives each tee it's own look.</p>
-    <p>Looking to stock your closet? The Basic tee also comes in a 3-pack or 5-pack at a bundle discount.</p>
-  `,
-  details: [
-    "Only the best materials",
-    "Ethically and locally made",
-    "Pre-washed and pre-shrunk",
-    "Machine wash cold with similar colors",
   ],
 };
-const policies = [
-  {
-    name: "International delivery",
-    icon: GlobeAmericasIcon,
-    description: "Get your order in 2 years",
-  },
-  {
-    name: "Loyalty rewards",
-    icon: CurrencyDollarIcon,
-    description: "Don't look at other tees",
-  },
-];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -87,6 +26,7 @@ function classNames(...classes: string[]) {
 
 export default function Example() {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const { id } = router.query;
 
@@ -99,7 +39,7 @@ export default function Example() {
         <ol role="list" className="flex items-center space-x-4">
           <li>
             <div className="flex items-center">
-              <a className="mr-4 text-sm font-medium text-gray-50">plot</a>
+              <a className="mr-4 text-sm font-medium text-gray-50">Plot</a>
               <svg
                 viewBox="0 0 6 20"
                 aria-hidden="true"
@@ -193,54 +133,25 @@ export default function Example() {
             <div className="mt-10">
               <h2 className="text-sm font-medium text-gray-50">Description</h2>
 
-              <div
-                className="prose prose-sm mt-4 text-gray-400"
-                dangerouslySetInnerHTML={{ __html: product.description }}
-              />
+              <div className="prose prose-sm mt-4 text-gray-400" />
+              <p className="text-gray-400">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Explicabo, illo facilis? Cumque eum facere magnam cum unde, esse
+                commodi repudiandae sint dolores, expedita explicabo nobis
+                deserunt facilis eius? Maxime, nesciunt?
+              </p>
             </div>
 
             <div className="mt-8 border-t border-gray-200 pt-8">
-              <h2 className="text-sm font-medium text-gray-50">
-                Fabric &amp; Care
-              </h2>
+              <h2 className="text-sm font-medium text-gray-50">Owner Data</h2>
 
               <div className="prose prose-sm mt-4 text-gray-400">
                 <ul role="list">
-                  {product.details.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
+                  <li>{session?.user.name as string}</li>
+                  <li>{session?.user.wallet as string}</li>
                 </ul>
               </div>
             </div>
-
-            {/* Policies */}
-            <section aria-labelledby="policies-heading" className="mt-10">
-              <h2 id="policies-heading" className="sr-only">
-                Our Policies
-              </h2>
-
-              <dl className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-                {policies.map((policy) => (
-                  <div
-                    key={policy.name}
-                    className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center"
-                  >
-                    <dt>
-                      <policy.icon
-                        className="mx-auto h-6 w-6 flex-shrink-0 text-gray-400"
-                        aria-hidden="true"
-                      />
-                      <span className="mt-4 text-sm font-medium text-gray-50">
-                        {policy.name}
-                      </span>
-                    </dt>
-                    <dd className="mt-1 text-sm text-gray-500">
-                      {policy.description}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-            </section>
             <button
               type="submit"
               className="mt-8 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
