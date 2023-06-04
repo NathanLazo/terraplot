@@ -30,4 +30,12 @@ export const useMarketplace = createTRPCRouter({
         },
       });
     }),
+  getLatest: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.product.findMany({
+      take: 5,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }),
 });

@@ -77,7 +77,7 @@ const DesktopNav: FC /*<desktopNavProps>*/ = ({}) => {
                     ]}
                   />
                   <span className="sr-only">Your profile</span>
-                  <span aria-hidden="true">Tom Cook</span>
+                  <span aria-hidden="true">{session?.user.name}</span>
                 </a>
               </li>
             </ul>

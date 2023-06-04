@@ -11,56 +11,6 @@ const products = [
     price: "$35",
     color: "Chihuahua",
   },
-  {
-    id: 1,
-    name: "Terreno 1",
-    href: "/marketplace/plot/34563",
-    imageSrc:
-      "https://www.propertyreporter.co.uk/images/660x350/plot_650-14007.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Chihuahua",
-  },
-  {
-    id: 1,
-    name: "Terreno 1",
-    href: "/marketplace/plot/34563",
-    imageSrc:
-      "https://www.propertyreporter.co.uk/images/660x350/plot_650-14007.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Chihuahua",
-  },
-  {
-    id: 1,
-    name: "Terreno 1",
-    href: "/marketplace/plot/34563",
-    imageSrc:
-      "https://www.propertyreporter.co.uk/images/660x350/plot_650-14007.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Chihuahua",
-  },
-  {
-    id: 1,
-    name: "Terreno 1",
-    href: "/marketplace/plot/34563",
-    imageSrc:
-      "https://www.propertyreporter.co.uk/images/660x350/plot_650-14007.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Chihuahua",
-  },
-  {
-    id: 1,
-    name: "Terreno 1",
-    href: "/marketplace/plot/34563",
-    imageSrc:
-      "https://www.propertyreporter.co.uk/images/660x350/plot_650-14007.jpg",
-    imageAlt: "Front of men's Basic Tee in black.",
-    price: "$35",
-    color: "Chihuahua",
-  },
   // More products...
 ];
 

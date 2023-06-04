@@ -48,7 +48,7 @@ const ACCEPTED_IMAGE_TYPES = [
 // Product schema and type
 const productSchema = z.object({
   name: z.string().min(3).max(20),
-  description: z.string().optional(),
+  description: z.string(),
   image: z
     .any()
     .refine(
@@ -59,7 +59,7 @@ const productSchema = z.object({
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       ".jpg, .jpeg, .png and .webp files are accepted."
     ),
-  price: z.string().optional(),
+  price: z.string(),
 });
 type Product = z.infer<typeof productSchema>;
 
@@ -151,7 +151,6 @@ const CreateProduct: FC<createProductProps> = ({
       })
         // Handle the response from backend here
         .then(async (res) => {
-          console.log("🚀 ~ file: create.tsx:175 ~ .then ~ res:", res);
           if (res.data.success === true) {
             const transaction = res.data.result.encoded_transaction;
             const res_trac = await signAndConfirmTransactionFe(
@@ -161,17 +160,22 @@ const CreateProduct: FC<createProductProps> = ({
                 resolve("done");
               }
             );
-            console.log(res_trac);
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return {
+              nftAddress: res_trac,
+              image: res,
+            };
           }
         })
-        .then(() => {
+        .then(({ nftAddress, image }) => {
           productsMutation
             .mutateAsync({
               name: data.name,
               description: data.description,
-              price: data.price,
-              image: data.image[0],
-              hash: "hash",
+              price: +data.price,
+              image: image as string,
+              hash: nftAddress as string,
+              userId: session?.user?.id as string,
             })
             .catch((err) => {
               reject(err);

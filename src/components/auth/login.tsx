@@ -50,6 +50,7 @@ const Auth: FC = () => {
     resolver: zodResolver(validationSchema),
     values: {
       wallet: publicKey,
+      password: "",
     },
   });
 
