@@ -4,6 +4,9 @@ import type { FC } from "react";
 // Icons
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 
+// Utils
+import axios from "axios";
+
 // interface plotListProps {}
 
 const statuses: {
@@ -43,6 +46,34 @@ const deployments: [
   },
   // More deployments...
 ];
+
+const fetchNFTs = (e) => {
+  e.preventDefault();
+  //const val = ReadAllNFts.callNft(xKey,wallID,network,updAuth); // This is the code which is not working
+
+  let nftUrl = `https://api.shyft.to/sol/v1/nft/read_all?network=${network}&address=${wallID}`;
+  axios({
+    // Endpoint to send files
+    url: nftUrl,
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": xKey,
+    },
+    // Attaching the form data
+  })
+    // Handle the response from backend here
+    .then((res) => {
+      console.log(res.data);
+      setDataFetched(res.data);
+      setLoaded(true);
+    })
+
+    // Catch errors if any
+    .catch((err) => {
+      console.warn(err);
+    });
+};
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");

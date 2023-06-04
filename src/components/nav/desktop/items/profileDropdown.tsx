@@ -7,8 +7,9 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { signOut } from "next-auth/react";
 
 // Utils
-import { toast } from "react-hot-toast";
 import Avatar from "boring-avatars";
+import { toast } from "react-hot-toast";
+import Link from "next/link";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -64,6 +65,19 @@ const profileDropdown: FC<ProfileDropdownProps> = ({ name }) => {
                       >
                         🤖 Your Profile
                       </a>
+                    )}
+                  </Menu.Item>
+                  <Menu.Item>
+                    {({ active }) => (
+                      <Link
+                        href="/dashboard"
+                        className={classNames(
+                          active ? "bg-zinc-900" : "",
+                          "block px-4 py-2 text-sm text-white"
+                        )}
+                      >
+                        🖥️ Dashboard
+                      </Link>
                     )}
                   </Menu.Item>
                   <Menu.Item>

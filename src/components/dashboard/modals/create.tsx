@@ -103,7 +103,7 @@ const CreateProduct: FC<createProductProps> = ({
   ) {
     const phantom = new PhantomWalletAdapter();
     await phantom.connect();
-    const rpcUrl = clusterApiUrl(network);
+    const rpcUrl = clusterApiUrl("devnet");
     const connection = new Connection(rpcUrl, "confirmed");
     //console.log(connection.rpcEndpoint);
     const ret = await confirmTransactionFromFrontend(
@@ -133,14 +133,6 @@ const CreateProduct: FC<createProductProps> = ({
   if (errors.image)
     toast.error("La imagen debe ser de tipo .jpg y no debe pesar mas de 5MB");
 
-  const callback = (signature: { err: null }, result: any) => {
-    console.log("Signature ", signature);
-    console.log("result ", result);
-    if (signature.err === null) {
-      console.log("Minted");
-    }
-  };
-
   // handle form submit
   const onSubmit: SubmitHandler<Product> = (data) => {
     console.log(data);
@@ -162,7 +154,7 @@ const CreateProduct: FC<createProductProps> = ({
     formData.append("external_url", "https://terraplot.lat");
     formData.append("max_supply", "0");
     formData.append("royalty", "5");
-    formData.append("file", data.image[0] as File);
+    formData.append("file", data.image[0] as File, "foto.png");
 
     axios({
       // Endpoint to send files
@@ -180,24 +172,26 @@ const CreateProduct: FC<createProductProps> = ({
     })
       // Handle the response from backend here
       .then(async (res) => {
-        console.log(res);
+        console.log("🚀 ~ file: create.tsx:175 ~ .then ~ res:", res);
         if (res.data.success === true) {
           const transaction = res.data.result.encoded_transaction;
           const ret_result = await signAndConfirmTransactionFe(
             "devnet",
             transaction,
-            callback
+            () => {
+              console.log("done");
+            }
           );
-          console.log(ret_result);
-          // setDispResp(res.data);
-          console.log(res.data);
+          console.log(
+            "🚀 ~ file: create.tsx:185 ~ .then ~ ret_result:",
+            ret_result
+          );
         }
       })
 
       // Catch errors if any
       .catch((err) => {
-        console.warn(err);
-        console.log(err.response.data);
+        console.log("🚀 ~ file: create.tsx:191 ~ err:", err);
       });
   };
 
