@@ -18,7 +18,23 @@ import { api } from "~/utils/api";
 
 // Auth
 import { useSession } from "next-auth/react";
+
+// Utils
 import axios from "axios";
+
+// Web3
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
+import {
+  clusterApiUrl,
+  Connection,
+  Context,
+  PublicKey,
+  SignatureResult,
+} from "@solana/web3.js";
+import {
+  confirmTransactionFromBackend,
+  confirmTransactionFromFrontend,
+} from "../utils";
 
 // image upload constraints for schema
 const MAX_FILE_SIZE = 500000;
@@ -58,22 +74,54 @@ const CreateProduct: FC<createProductProps> = ({
   // Auth
   const { data: session } = useSession();
 
-  //image upload
-  const uploadImage = async (data: File) => {
-    const imageForm = new FormData();
-    imageForm.append("file", data);
-    imageForm.append("upload_preset", "green-lemon");
-    const res = await fetch(
-      "https://api.cloudinary.com/v1_1/de2tjedpu/upload",
-      {
-        method: "POST",
-        body: imageForm,
-      }
+  // //image upload
+  // const uploadImage = async (data: File) => {
+  //   const imageForm = new FormData();
+  //   imageForm.append("file", data);
+  //   imageForm.append("upload_preset", "green-lemon");
+  //   const res = await fetch(
+  //     "https://api.cloudinary.com/v1_1/de2tjedpu/upload",
+  //     {
+  //       method: "POST",
+  //       body: imageForm,
+  //     }
+  //   );
+  //   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  //   const imageData = await res.json();
+  //   return imageData.secure_url as string;
+  // };
+
+  async function signAndConfirmTransactionFe(
+    network: string | undefined,
+    transaction:
+      | WithImplicitCoercion<string>
+      | { [Symbol.toPrimitive](hint: "string"): string },
+    callback: {
+      (signature: any, result: any): void;
+      (signatureResult: SignatureResult, context: Context): void;
+    }
+  ) {
+    const phantom = new PhantomWalletAdapter();
+    await phantom.connect();
+    const rpcUrl = clusterApiUrl(network);
+    const connection = new Connection(rpcUrl, "confirmed");
+    //console.log(connection.rpcEndpoint);
+    const ret = await confirmTransactionFromFrontend(
+      connection,
+      transaction,
+      phantom
     );
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const imageData = await res.json();
-    return imageData.secure_url as string;
-  };
+    // const checks = await connection.confirmTransaction({signature:ret},'finalised');
+    console.log(ret);
+    // console.log(checks);
+    // await connection.confirmTransaction({
+    //     blockhash: transaction.blockhash,
+    //     signature: ret,
+    //   });
+    connection.onSignature(ret, callback, "finalized");
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return ret;
+  }
 
   const {
     register,
@@ -85,17 +133,17 @@ const CreateProduct: FC<createProductProps> = ({
   if (errors.image)
     toast.error("La imagen debe ser de tipo .jpg y no debe pesar mas de 5MB");
 
+  const callback = (signature: { err: null }, result: any) => {
+    console.log("Signature ", signature);
+    console.log("result ", result);
+    if (signature.err === null) {
+      console.log("Minted");
+    }
+  };
+
   // handle form submit
   const onSubmit: SubmitHandler<Product> = (data) => {
     console.log(data);
-
-    // const image = await uploadImage(data.image[0] as File);
-    // if (!image)
-    //   return toast.error("Error al subir la imagen, inténtelo mas tarde");
-
-    const myHeaders = new Headers();
-    myHeaders.append("x-api-key", "yuNXtSyS8hhVTdkn");
-    myHeaders.append("Content-Type", "multipart/form-data");
 
     const formData = new FormData();
 
@@ -122,7 +170,7 @@ const CreateProduct: FC<createProductProps> = ({
       method: "POST",
       headers: {
         "Content-Type": "multipart/form-data",
-        "x-api-key": "Your-api-key",
+        "x-api-key": "yuNXtSyS8hhVTdkn",
         Accept: "*/*",
         "Access-Control-Allow-Origin": "*",
       },
@@ -134,25 +182,22 @@ const CreateProduct: FC<createProductProps> = ({
       .then(async (res) => {
         console.log(res);
         if (res.data.success === true) {
-          // setStatus("success: Transaction Created. Signing Transactions. Please Wait.");
-          const transaction = res.data.result.encoded_transaction; //encoded transaction
-          // setSaveMinted(res.data.result.mint);
+          const transaction = res.data.result.encoded_transaction;
           const ret_result = await signAndConfirmTransactionFe(
             "devnet",
             transaction,
-            (res) => {
-              return res;
-            }
-          ); //signing the encoded transaction
+            callback
+          );
           console.log(ret_result);
-          setDispResp(res.data);
+          // setDispResp(res.data);
+          console.log(res.data);
         }
       })
 
       // Catch errors if any
       .catch((err) => {
         console.warn(err);
-        setStatus("success: false");
+        console.log(err.response.data);
       });
   };
 

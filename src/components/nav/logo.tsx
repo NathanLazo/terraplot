@@ -13,11 +13,7 @@ const logo: FC = () => {
       <Link href="/">
         <span className="sr-only">Tlachia</span>
         {/* <Image className="h-8 w-auto" src={Logo as string} alt="Logo tlachia" /> */}
-        <img
-          className="h-8 w-auto"
-          src="https://tailwindui.com/img/logos/mark.svg?color=green&shade=700"
-          alt="Your Company"
-        />
+        <Image className="h-8 w-auto" src={Logo as string} alt="Your Company" />
       </Link>
     </div>
   );
