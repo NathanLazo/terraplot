@@ -51,6 +51,7 @@ const PlotList: FC /*<plotListProps>*/ = ({}) => {
         environment: string;
       }
     ]
+    // @ts-expect-error - I just want to start with no items
   >([]);
 
   const { data: session } = useSession();
@@ -69,10 +70,13 @@ const PlotList: FC /*<plotListProps>*/ = ({}) => {
     })
       // Handle the response from backend here
       .then((res) => {
+        // @ts-expect-error - Restarting the list
         setDeployments([]);
         console.log(res?.data);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        // @ts-expect-error - just any value
         res?.data.result?.map((nft) => {
+          // @ts-expect-error - weird error
           setDeployments((deployments) => [
             ...deployments,
             {
