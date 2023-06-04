@@ -1,9 +1,73 @@
-import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import { useSession } from "next-auth/react";
 import Avatar from "boring-avatars";
+import { PhotoIcon } from "@heroicons/react/24/solid";
+
+// Utils
+import toast from "react-hot-toast";
+import { useRouter } from "next/router";
+import { api } from "~/utils/api";
+
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 export default function Example() {
+  // API
+  const uploadProfile = api.useProfile.upload.useMutation();
+  type ValidationSchema = z.infer<typeof validationSchema>;
+
+  // Validation Schema (From Zod) for React Hook Form
+  const validationSchema = z.object({
+    name: z.string().min(1, { message: "First name is required" }),
+    lastName: z.string().min(1, { message: "Last name is required" }),
+    curp: z.string().min(1, { message: "CURP is required" }),
+    country: z.string().min(1, { message: "Country is required" }),
+    state: z.string().min(1, { message: "State is required" }),
+    city: z.string().min(1, { message: "City is required" }),
+    address: z.string().min(1, { message: "Address is required" }),
+    zip: z.string().min(1, { message: "Zip is required" }),
+  });
+
   const { data: session } = useSession();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ValidationSchema>({
+    resolver: zodResolver(validationSchema),
+  });
+
+  const router = useRouter();
+  const onSubmit: SubmitHandler<ValidationSchema> = (data) => {
+    toast
+      .promise(
+        uploadProfile.mutateAsync({
+          name: data.name,
+          lastName: data.lastName,
+          curp: data.curp,
+          country: data.country,
+          state: data.state,
+          city: data.city,
+          address: data.address,
+          zip: +data.zip,
+          userId: session?.user.id as string,
+        }),
+        {
+          loading: "Updating profile...",
+          success: "Profile updated successfully",
+          error: "Error updating profile",
+        }
+      )
+      .then(async () => {
+        await router.push("/profile/settings");
+      })
+      .catch((error) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        toast.error(error.shape.message as string);
+      });
+  };
+
   return (
     <div className="md:py-15 mx-5 space-y-10 divide-y divide-gray-900/10 py-5 md:mx-20">
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
@@ -17,7 +81,7 @@ export default function Example() {
           </p>
         </div>
 
-        <form className="bg-gray-100 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+        <div className="bg-gray-100 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
           <div className="px-4 py-6 sm:p-8">
             <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-4">
@@ -114,7 +178,7 @@ export default function Example() {
               Save
             </button>
           </div>
-        </form>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
@@ -127,7 +191,11 @@ export default function Example() {
           </p>
         </div>
 
-        <form className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+        <form
+          className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 "
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <div className="px-4 py-6 sm:p-8">
             <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
@@ -140,9 +208,9 @@ export default function Example() {
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="first-name"
-                    id="first-name"
-                    autoComplete="given-name"
+                    {...register("name")}
+                    id="name"
+                    autoComplete="name"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -158,9 +226,9 @@ export default function Example() {
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="last-name"
-                    id="last-name"
-                    autoComplete="family-name"
+                    {...register("lastName")}
+                    id="lastName"
+                    autoComplete="lastName"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -175,8 +243,8 @@ export default function Example() {
                 </label>
                 <div className="mt-2">
                   <input
+                    {...register("curp")}
                     id="curp"
-                    name="curp"
                     type="text"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
@@ -193,8 +261,8 @@ export default function Example() {
                 <div className="mt-2">
                   <select
                     id="country"
-                    name="country"
-                    autoComplete="country-name"
+                    {...register("country")}
+                    autoComplete="country"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                   >
                     <option>Mexico</option>
@@ -214,9 +282,9 @@ export default function Example() {
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="street-address"
-                    id="street-address"
-                    autoComplete="street-address"
+                    {...register("address")}
+                    id="address"
+                    autoComplete="address"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -232,7 +300,7 @@ export default function Example() {
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="city"
+                    {...register("city")}
                     id="city"
                     autoComplete="address-level2"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -250,9 +318,9 @@ export default function Example() {
                 <div className="mt-2">
                   <input
                     type="text"
-                    name="region"
-                    id="region"
-                    autoComplete="address-level1"
+                    {...register("state")}
+                    id="state"
+                    autoComplete="state"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -260,17 +328,17 @@ export default function Example() {
 
               <div className="sm:col-span-2">
                 <label
-                  htmlFor="postal-code"
+                  htmlFor="zip"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   ZIP / Postal code
                 </label>
                 <div className="mt-2">
                   <input
-                    type="text"
-                    name="postal-code"
-                    id="postal-code"
-                    autoComplete="postal-code"
+                    type="number"
+                    {...register("zip")}
+                    id="zip"
+                    autoComplete="zip"
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   />
                 </div>
