@@ -8,9 +8,9 @@ console.log("Hello from the other side")
 
 const features = [
   {
-    name: "Sin registros",
+    name: "Sin trackers",
     description:
-      "No es necesario correos ni contraseñas, solo tu wallet.",
+      "Los datos no son recompilados.",
     icon: CloudArrowUpIcon,
   },
   {
