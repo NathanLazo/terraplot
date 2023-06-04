@@ -99,7 +99,7 @@ model Product {
     id          String   @id @default(cuid())
     name        String
     description String
-    image       String
+    image       String   @db.VarChar(255)
     price       Float
     hash        String
     userId      String

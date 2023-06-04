@@ -2,6 +2,7 @@
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const statuses = {
   "Available to buy": "text-green-700 bg-green-50 ring-green-600/20",
@@ -51,6 +52,27 @@ function classNames(...classes: string[]) {
 }
 
 export default function Example() {
+  const router = useRouter();
+
+  const { id } = router.query;
+
+  const myHeaders = new Headers();
+  myHeaders.append("x-api-key", "yuNXtSyS8hhVTdkn");
+
+  fetch(
+    `https://api.shyft.to/sol/v1/nft/read_all?network=devnet&address=${
+      id as string
+    }`,
+    {
+      method: "GET",
+      headers: myHeaders,
+      redirect: "follow",
+    }
+  )
+    .then((response) => response.text())
+    .then((result) => console.log(result))
+    .catch((error) => console.log("error", error));
+
   return (
     <div className="mx-5 md:mx-20">
       <ul role="list" className="divide-y divide-white/10">
