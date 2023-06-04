@@ -50,7 +50,7 @@ function classNames(...classes) {
 
 export default function Example() {
   return (
-    <div className="mx-20">
+    <div className="mx-5 md:mx-20">
       <ul role="list" className="divide-y divide-white/10">
         {projects.map((project) => (
           <li
@@ -78,7 +78,7 @@ export default function Example() {
             <div className="flex flex-none items-center gap-x-4">
               <a
                 href="/marketplace/plot/123"
-                className="hidden rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-gray-50 shadow-sm ring-1 ring-inset hover:bg-indigo-500 sm:block"
+                className="mb-10 rounded-md bg-indigo-600 px-2.5 py-1.5 text-sm font-semibold text-gray-50 shadow-sm ring-1 ring-inset hover:bg-indigo-500 sm:block md:mb-auto"
               >
                 View plot<span className="sr-only">, {project.name}</span>
               </a>
