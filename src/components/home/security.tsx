@@ -4,26 +4,31 @@ import {
   FingerPrintIcon,
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
+console.log("Hello from the other side")
 
 const features = [
   {
-    name: "Sin registros",
-    description: "No es necesario correos ni contraseñas, solo tu wallet.",
+    name: "Sin trackers",
+    description:
+      "Los datos no son recompilados.",
     icon: CloudArrowUpIcon,
   },
   {
     name: "Sin letras pequeñas",
-    description: "Transparencia total en transacciones.",
+    description:
+      "Transparencia total en transacciones.",
     icon: LockClosedIcon,
   },
   {
     name: "Descentralizado",
-    description: "Datos más seguros, accesibles, más rápidos y eficientes.",
+    description:
+      "Datos más seguros, accesibles, más rápidos y eficientes.",
     icon: ArrowPathIcon,
   },
   {
     name: "Confidencialidad total",
-    description: "Encriptación de datos y transacciones de extremo a extremo. ",
+    description:
+      "Encriptación de datos y transacciones de extremo a extremo. ",
     icon: FingerPrintIcon,
   },
 ];
