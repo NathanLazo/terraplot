@@ -163,7 +163,8 @@ const CreateProduct: FC<createProductProps> = ({
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return {
               nftAddress: res_trac,
-              image: res.data.result.url,
+              image:
+                "https://elcomercio.pe/resizer/LpZzj1EzHef9zns5HQCJ2bziEOo=/580x330/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/P6XLSB3NANECJKXO6Q7APHPBHU.jpg",
             };
           }
         })
