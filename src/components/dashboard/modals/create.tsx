@@ -163,7 +163,7 @@ const CreateProduct: FC<createProductProps> = ({
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return {
               nftAddress: res_trac,
-              image: res,
+              image: res.data.result.url,
             };
           }
         })
