@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import { Fragment } from "react";
+import { Fragment, use, useEffect } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -56,22 +56,28 @@ export default function Example() {
 
   const { id } = router.query;
 
-  const myHeaders = new Headers();
-  myHeaders.append("x-api-key", "yuNXtSyS8hhVTdkn");
+  const getUserdata = () => {
+    const myHeaders = new Headers();
+    myHeaders.append("x-api-key", "yuNXtSyS8hhVTdkn");
 
-  fetch(
-    `https://api.shyft.to/sol/v1/nft/read_all?network=devnet&address=${
-      id as string
-    }`,
-    {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    }
-  )
-    .then((response) => response.text())
-    .then((result) => console.log(result))
-    .catch((error) => console.log("error", error));
+    fetch(
+      `https://api.shyft.to/sol/v1/nft/read_all?network=devnet&address=${
+        id as string
+      }`,
+      {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow",
+      }
+    )
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
+  };
+
+  useEffect(() => {
+    getUserdata();
+  }, [id]);
 
   return (
     <div className="mx-5 md:mx-20">
