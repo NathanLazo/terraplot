@@ -14,43 +14,26 @@ import { useEffect } from "react";
 import Background from "./background";
 import Image from "next/image";
 
-import {
-  clusterApiUrl,
-  Connection,
-  Keypair,
-  Transaction,
-} from "@solana/web3.js";
-import { decode } from "bs58";
-
-async function createSignedSerializedTxn(
-  encodedTransaction: string,
-  fromPrivateKey: string
-  // @ts-expect-error -FIXME
-): string {
-  try {
-    const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
-    const feePayer = Keypair.fromSecretKey(decode(fromPrivateKey));
-    const recoveredTransaction = Transaction.from(
-      Buffer.from(encodedTransaction, "base64")
-    );
-    const signedTrasaction = recoveredTransaction.partialSign(feePayer);
-
-    // This is the way that signed transactions can be serialized in base64 format. Needed to make a successful API call.
-
-    // @ts-expect-error - wtf with this error
-    const txnToSendBackToShyft = signedTransaction
-      .serialize()
-      .toString("base64");
-    return txnToSendBackToShyft;
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 const Carousel: FC<{
   data: Product[];
 }> = ({ data }) => {
-  console.log("🚀 ~ file: carousel.tsx:15 ~ data:", data);
+  const transferNft = (nftHash: string) => {
+    const myHeaders = new Headers();
+    myHeaders.append("x-api-key", "yuNXtSyS8hhVTdkn");
+
+    const raw = `{\n  "network": "devnet",\n  "token_address": "${nftHash}",\n  "from_address": "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",\n  "to_address": "2RQcJmb6iPqj9AXgrjh7RYu97RpucguHWPw7MJYGWYRr",\n  "transfer_authority": true\n}`;
+
+    fetch("https://api.shyft.to/sol/v1/nft/transfer_detach", {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    })
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
+  };
+
   useEffect(() => {
     const slidesContainer = document.querySelector(".slides-container");
     // @ts-expect-error -  posible null
@@ -78,10 +61,13 @@ const Carousel: FC<{
           <div className="relative">
             <div className="slides-container flex h-72 snap-x snap-mandatory space-x-2 overflow-hidden overflow-x-auto scroll-smooth rounded before:w-[45vw] before:shrink-0 after:w-[45vw] after:shrink-0 md:before:w-0 md:after:w-0">
               {data?.map((product, index) => (
-                <div
-                  className="slide aspect-square h-full flex-shrink-0 snap-center overflow-hidden rounded"
+                <button
+                  className="slide z-10 aspect-square h-full flex-shrink-0 snap-center overflow-hidden rounded"
                   key={`product-${index} with hash ${product.hash}`}
                   id="slide"
+                  onClick={() => {
+                    transferNft(product.hash);
+                  }}
                 >
                   <div className="relative isolate flex flex-col justify-end overflow-hidden rounded-2xl bg-gray-900 px-8 pb-8 pt-80 transition-opacity hover:opacity-80 sm:pt-48 ">
                     <Image
@@ -113,13 +99,13 @@ const Carousel: FC<{
                       </a>
                     </h3>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
             <div className="absolute -left-4 top-0  hidden h-full items-center md:flex">
               <button
                 role="button"
-                className="prev group rounded-full  bg-neutral-100 px-2 py-2 text-neutral-900"
+                className="prev group z-50 rounded-full  bg-neutral-100 px-2 py-2 text-neutral-900"
                 aria-label="prev"
               >
                 <svg
@@ -141,7 +127,7 @@ const Carousel: FC<{
             <div className="absolute -right-4 top-0  hidden h-full items-center md:flex">
               <button
                 role="button"
-                className="next group rounded-full  bg-neutral-100 px-2 py-2 text-neutral-900"
+                className="next group z-50 rounded-full  bg-neutral-100 px-2 py-2 text-neutral-900"
                 aria-label="next"
               >
                 <svg
