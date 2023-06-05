@@ -2,53 +2,200 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { Fragment, useState } from "react";
+
+// UI
+import { type FC, Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import { toast } from "react-hot-toast";
 
-import type { FC } from "react";
-import { FolderPlusIcon, PlusIcon } from "@heroicons/react/24/outline";
-import toast from "react-hot-toast";
+//typed form
+import { z } from "zod";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { ethers } from "ethers";
-import contractAbi from "@lib/abi.json";
+// API
+import { api } from "~/utils/api";
 
-interface addProps {
+// Auth
+import { useSession } from "next-auth/react";
+
+// Utils
+import axios from "axios";
+
+// Web3
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
+import {
+  clusterApiUrl,
+  Connection,
+  Context,
+  PublicKey,
+  SignatureResult,
+} from "@solana/web3.js";
+import {
+  confirmTransactionFromBackend,
+  confirmTransactionFromFrontend,
+} from "../utils";
+
+// image upload constraints for schema
+const MAX_FILE_SIZE = 500000;
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+];
+
+// Product schema and type
+const productSchema = z.object({
+  name: z.string().min(3).max(20),
+  description: z.string(),
+  image: z
+    .any()
+    .refine(
+      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
+      `Max file size is 5MB.`
+    )
+    .refine(
+      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+      ".jpg, .jpeg, .png and .webp files are accepted."
+    ),
+  price: z.string(),
+});
+type Product = z.infer<typeof productSchema>;
+
+interface createProductProps {
   createProductModalOpen: boolean;
   setCreateProductModalOpen: (value: boolean) => void;
 }
-
-const Add: FC<addProps> = ({
+const CreateProduct: FC<createProductProps> = ({
   createProductModalOpen,
   setCreateProductModalOpen,
 }) => {
-  const [name, setName] = useState<string>("");
-  const [type, setType] = useState<string>("");
-  const [breed, setBreed] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  // Auth
+  const { data: session } = useSession();
 
-  const contractAddress = "0xAFaB5a1E8a2FB06A54F4C962c7079d3B5ddA57dD";
+  const productsMutation = api.useMarketplace.upload.useMutation();
 
-  const handleSubmit = () => {
-    (window as any).ethereum
-      .request({ method: "eth_requestAccounts" })
-      .catch((err: any) => {
-        console.log(err);
-      });
-
-    const tempProvider = new ethers.providers.Web3Provider(
-      (window as any).ethereum
+  async function signAndConfirmTransactionFe(
+    network: string | undefined,
+    transaction:
+      | WithImplicitCoercion<string>
+      | { [Symbol.toPrimitive](hint: "string"): string },
+    callback: {
+      (signature: any, result: any): void;
+      (signatureResult: SignatureResult, context: Context): void;
+    }
+  ) {
+    const phantom = new PhantomWalletAdapter();
+    await phantom.connect();
+    const rpcUrl = clusterApiUrl("devnet");
+    const connection = new Connection(rpcUrl, "confirmed");
+    const ret = await confirmTransactionFromFrontend(
+      connection,
+      transaction,
+      phantom
     );
-    const signer = tempProvider.getSigner();
-    const contract = new ethers.Contract(contractAddress, contractAbi, signer);
-    (contract as any)
-      .store(name, type, breed, description)
-      .then((result: any) => {
-        console.log(result);
-        toast.success("Transacción exitosa");
+    // const checks = await connection.confirmTransaction({signature:ret},'finalised');
+    console.log(ret);
+    // console.log(checks);
+    // await connection.confirmTransaction({
+    //     blockhash: transaction.blockhash,
+    //     signature: ret,
+    //   });
+    connection.onSignature(ret, callback, "finalized");
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return ret;
+  }
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Product>({ resolver: zodResolver(productSchema) });
+
+  if (errors.name) toast.error("El nombre debe tener entre 3 y 20 caracteres");
+  if (errors.image)
+    toast.error("La imagen debe ser de tipo .jpg y no debe pesar mas de 5MB");
+
+  // handle form submit
+  const onSubmit: SubmitHandler<Product> = (data) => {
+    const formData = new FormData();
+
+    const attrib = [{ trait_type: "price", value: data.price }];
+
+    formData.append("network", "devnet");
+    formData.append("wallet", session?.user?.wallet as string);
+    formData.append("name", data.name);
+    formData.append("symbol", "TPL");
+    formData.append("description", data.description);
+    formData.append("attributes", JSON.stringify(attrib));
+    formData.append("external_url", "https://terraplot.lat");
+    formData.append("max_supply", "0");
+    formData.append("royalty", "5");
+    formData.append("file", data.image[0] as File, "foto.png");
+
+    const newPromise = new Promise((resolve, reject) => {
+      axios({
+        // Endpoint to send files
+        url: "https://api.shyft.to/sol/v1/nft/create_detach",
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "x-api-key": "yuNXtSyS8hhVTdkn",
+          Accept: "*/*",
+          "Access-Control-Allow-Origin": "*",
+        },
+
+        // Attaching the form data
+        data: formData,
       })
-      .catch((err: any) => {
+        // Handle the response from backend here
+        .then(async (res) => {
+          if (res.data.success === true) {
+            const transaction = res.data.result.encoded_transaction;
+            const res_trac = await signAndConfirmTransactionFe(
+              "devnet",
+              transaction,
+              () => {
+                resolve("done");
+              }
+            );
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+            return {
+              nftAddress: res_trac,
+              image:
+                "https://elcomercio.pe/resizer/LpZzj1EzHef9zns5HQCJ2bziEOo=/580x330/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/P6XLSB3NANECJKXO6Q7APHPBHU.jpg",
+            };
+          }
+        })
+        // @ts-expect-error - just any values
+        .then(({ nftAddress, image }) => {
+          productsMutation
+            .mutateAsync({
+              name: data.name,
+              description: data.description,
+              price: +data.price,
+              image: image as string,
+              hash: nftAddress as string,
+              userId: session?.user?.id as string,
+            })
+            .catch((err) => {
+              reject(err);
+            });
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+
+    toast
+      .promise(newPromise, {
+        loading: "Creando NFT...",
+        success: "NFT creado exitosamente",
+        error: "Error al crear NFT",
+      })
+      .catch((err) => {
         console.log(err);
-        toast.error("Error en la transacción");
       });
   };
 
@@ -57,7 +204,7 @@ const Add: FC<addProps> = ({
       <Transition.Root show={createProductModalOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="relative z-50"
+          className="relative z-10"
           onClose={setCreateProductModalOpen}
         >
           <Transition.Child
@@ -69,7 +216,7 @@ const Add: FC<addProps> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-zinc-800 bg-opacity-75 transition-opacity" />
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
           </Transition.Child>
 
           <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -83,117 +230,88 @@ const Add: FC<addProps> = ({
                 leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                 leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
               >
-                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4  text-left shadow-xl transition-all  sm:w-full sm:max-w-sm">
-                  <>
-                    <form>
-                      <div className="">
-                        <div className="border-b border-gray-900/10 py-6">
-                          <div className="flex items-center justify-center">
-                            <FolderPlusIcon className="h-9 w-9 text-gray-900/50" />
-                          </div>
-                          <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                            <div className="sm:col-span-3">
-                              <label
-                                htmlFor="name"
-                                className="block text-sm font-medium leading-6 text-gray-900"
-                              >
-                                Name
-                              </label>
-                              <div className="mt-2">
-                                <input
-                                  type="text"
-                                  name="name"
-                                  onChange={(e) => {
-                                    setName(e.target.value);
-                                  }}
-                                  id="name"
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="sm:col-span-3">
-                              <label
-                                htmlFor="type"
-                                className="block text-sm font-medium leading-6 text-gray-900"
-                              >
-                                Type
-                              </label>
-                              <div className="mt-2">
-                                <input
-                                  type="text"
-                                  onChange={(e) => {
-                                    setType(e.target.value);
-                                  }}
-                                  name="type"
-                                  id="type"
-                                  autoComplete="family-name"
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="sm:col-span-4">
-                              <label
-                                htmlFor="breed"
-                                className="block text-sm font-medium leading-6 text-gray-900"
-                              >
-                                Breed
-                              </label>
-                              <div className="mt-2">
-                                <input
-                                  id="breed"
-                                  name="breed"
-                                  onChange={(e) => {
-                                    setBreed(e.target.value);
-                                  }}
-                                  type="breed"
-                                  autoComplete="breed"
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                />
-                              </div>
-                            </div>
-
-                            <div className="col-span-full">
-                              <label
-                                htmlFor="about"
-                                className="block text-sm font-medium leading-6 text-gray-900"
-                              >
-                                Description
-                              </label>
-                              <div className="mt-2">
-                                <textarea
-                                  id="about"
-                                  name="about"
-                                  onChange={(e) => {
-                                    setDescription(e.target.value);
-                                  }}
-                                  rows={3}
-                                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                  defaultValue={""}
-                                />
-                              </div>
-                              <p className="mt-3 text-sm leading-6 text-gray-600">
-                                Write a few sentences about the product.
-                              </p>
-                              <div className="mt-4 flex w-full justify-center">
-                                <button
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    handleSubmit();
-                                  }}
-                                  className="mx-auto flex w-auto items-center rounded-md bg-primary-200 px-2 py-1 text-gray-100 hover:bg-primary-100"
-                                >
-                                  <PlusIcon className="mx-auto mr-1 h-4 w-4" />
-                                  Create
-                                </button>
-                              </div>
-                            </div>
-                          </div>
+                <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+                  {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="space-y-4">
+                      <div>
+                        <label
+                          htmlFor="product_name"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Product Name
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            {...register("name")}
+                            id="product_name"
+                            className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                            placeholder="Product name..."
+                          />
                         </div>
                       </div>
-                    </form>
-                  </>
+                      <div>
+                        <label
+                          htmlFor="product_description"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Product Description
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            {...register("description")}
+                            id="product_description"
+                            className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                            placeholder="Product description..."
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="product_image"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Product Image
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="file"
+                            {...register("image")}
+                            id="product_image"
+                            className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                            placeholder="Product description..."
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="product_price"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Product Price
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="number"
+                            {...register("price")}
+                            id="product_price"
+                            className="block w-full rounded-md border-0 py-1.5 pl-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                            placeholder="Product description..."
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-5 sm:mt-6">
+                      <button
+                        type="submit"
+                        className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+                      >
+                        Create
+                      </button>
+                    </div>
+                  </form>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
@@ -203,4 +321,4 @@ const Add: FC<addProps> = ({
     </>
   );
 };
-export default Add;
+export default CreateProduct;

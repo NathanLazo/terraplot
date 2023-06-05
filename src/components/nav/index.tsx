@@ -18,14 +18,14 @@ const solutions = [
     name: "Producers",
     description:
       "If you're a producer, we can help you get your product to market",
-    href: "/home/analytics",
+    href: "/producer",
     icon: TruckIcon,
   },
   {
     name: "Investors",
     description:
       "If you're an investor, we can help you find the right opportunity",
-    href: "/home/explore",
+    href: "/investor",
     icon: BanknotesIcon,
   },
 ];
@@ -33,7 +33,7 @@ const callsToAction = [{ name: "Contact Us", href: "#", icon: PhoneIcon }];
 
 const Index: FC = () => {
   return (
-    <Popover className="relative z-50 bg-zinc-800">
+    <Popover className="relative z-[150] bg-zinc-800">
       <DesktopNav solutions={solutions} callsToAction={callsToAction} />
 
       <MobileNav solutions={solutions} />

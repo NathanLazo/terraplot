@@ -1,7 +1,9 @@
 import {
-  CloudArrowUpIcon,
   LockClosedIcon,
   ServerIcon,
+  ArrowTrendingUpIcon,
+  GlobeAltIcon
+
 } from "@heroicons/react/20/solid";
 
 export default function Example() {
@@ -22,16 +24,14 @@ export default function Example() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0">
           <p className="text-lg font-semibold leading-8 tracking-tight text-indigo-600">
-            Deploy faster
+            Hacer crecer tus tierras
           </p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-50 sm:text-4xl">
-            A better workflow
+            De forma segura.
           </h1>
           <p className="mt-6 text-xl leading-8 text-gray-300">
-            Aliquet nec orci mattis amet quisque ullamcorper neque, nibh sem. At
-            arcu, sit dui mi, nibh dui, diam eget aliquam. Quisque id at vitae
-            feugiat egestas ac. Diam nulla orci at in viverra scelerisque eget.
-            Eleifend egestas fringilla sapien.
+          Facilitar la oferta de parcelas agrícolas, por parte de los productores y 
+          permitir a los inversores llegar acuerdos y realizar inversiones utilizando blockchain.
           </p>
         </div>
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:mt-10 lg:max-w-none lg:grid-cols-12">
@@ -60,17 +60,15 @@ export default function Example() {
             <figure className="border-l border-indigo-600 pl-8">
               <blockquote className="text-xl font-semibold leading-8 tracking-tight text-gray-300">
                 <p>
-                  “Vel ultricies morbi odio facilisi ultrices accumsan donec
-                  lacus purus. Lectus nibh ullamcorper ac dictum justo in
-                  euismod. Risus aenean ut elit massa. In amet aliquet eget
-                  cras. Sem volutpat enim tristique.”
+                  “El usar TerraPlot me ayudó en el cierre de un trato dicho 
+                  sea confiable y sin trucos con blockchain y Solana  .”
                 </p>
               </blockquote>
               <figcaption className="mt-8 flex gap-x-4">
                 <img
                   src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                   alt=""
-                  className="mt-1 h-10 w-10 flex-none rounded-full bg-gray-50"
+                  className="mt-1 h-10 w-9 flex-none rounded-full bg-gray-50"
                 />
                 <div className="text-sm leading-6">
                   <div className="font-semibold text-gray-300">
@@ -83,26 +81,22 @@ export default function Example() {
           </div>
           <div className="max-w-xl text-base leading-7 text-gray-200 lg:col-span-7">
             <p>
-              Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus
-              enim. Mattis mauris semper sed amet vitae sed turpis id. Id dolor
-              praesent donec est. Odio penatibus risus viverra tellus varius sit
-              neque erat velit. Faucibus commodo massa rhoncus, volutpat.
-              Dignissim sed eget risus enim. Mattis mauris semper sed amet vitae
-              sed turpis id.
+            Los productores pueden listar sus parcelas disponibles 
+            y especificar los términos y condiciones asociados.
             </p>
-            <ul role="list" className="mt-8 max-w-xl space-y-8 text-gray-100">
+            <ul role="list" className="mt-8 max-w-xl space-y-7 text-gray-100">
               <li className="flex gap-x-3">
-                <CloudArrowUpIcon
+                <ArrowTrendingUpIcon
                   className="mt-1 h-5 w-5 flex-none text-indigo-600"
                   aria-hidden="true"
                 />
                 <span>
                   <strong className="font-semibold text-gray-400">
-                    Push to deploy.
+                  Visualización de parcelas
                   </strong>{" "}
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Maiores impedit perferendis suscipit eaque, iste dolor
-                  cupiditate blanditiis ratione.
+                  Los inversores pueden explorar y buscar parcelas disponibles en la
+                   plataforma, accediendo a detalles como la ubicación, el tamaño y 
+                   los productos agrícolas asociados.
                 </span>
               </li>
               <li className="flex gap-x-3">
@@ -112,44 +106,36 @@ export default function Example() {
                 />
                 <span>
                   <strong className="font-semibold text-gray-400">
-                    SSL certificates.
+                  Seguimiento y monitoreo de cultivos:.
                   </strong>{" "}
-                  Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure
-                  qui lorem cupidatat commodo.
+                  Implementar herramientas de monitoreo y seguimiento para permitir a los
+                   inversores supervisar el progreso de los cultivos en tiempo real. y Proporcionar 
+                   informes detallados sobre el rendimiento de las parcelas y compartir datos relevantes
+                    con los inversores.
                 </span>
               </li>
               <li className="flex gap-x-3">
-                <ServerIcon
+                <GlobeAltIcon
                   className="mt-1 h-5 w-5 flex-none text-indigo-600"
                   aria-hidden="true"
                 />
                 <span>
                   <strong className="font-semibold text-gray-400">
-                    Database backups.
+                  Expansión internacional:
                   </strong>{" "}
-                  Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus.
-                  Et magna sit morbi lobortis.
+                  Permitiendo la interacción de productores e inversores de diferentes 
+                  países de una sencilla manera. Enfocado en los países con mayor potencial 
+                  de crecimiento en el sector agrícola y una alta adopción de criptomonedas 
+                  en el ámbito empresarial.
                 </span>
               </li>
             </ul>
             <p className="mt-8">
-              Et vitae blandit facilisi magna lacus commodo. Vitae sapien duis
-              odio id et. Id blandit molestie auctor fermentum dignissim. Lacus
-              diam tincidunt ac cursus in vel. Mauris varius vulputate et
-              ultrices hac adipiscing egestas. Iaculis convallis ac tempor et
-              ut. Ac lorem vel integer orci.
+            Gracias a la tecnología blockchain, se garantiza garantiza la transparencia en todas
+             las transacciones realizadas. Cada movimiento se registra de forma 
+             inmutable, lo que brinda seguridad y confianza a todo momento.
             </p>
-            <h2 className="mt-16 text-2xl font-bold tracking-tight text-gray-400">
-              No server? No problem.
-            </h2>
-            <p className="mt-6">
-              Id orci tellus laoreet id ac. Dolor, aenean leo, ac etiam
-              consequat in. Convallis arcu ipsum urna nibh. Pharetra, euismod
-              vitae interdum mauris enim, consequat vulputate nibh. Maecenas
-              pellentesque id sed tellus mauris, ultrices mauris. Tincidunt enim
-              cursus ridiculus mi. Pellentesque nam sed nullam sed diam turpis
-              ipsum eu a sed convallis diam.
-            </p>
+            
           </div>
         </div>
       </div>

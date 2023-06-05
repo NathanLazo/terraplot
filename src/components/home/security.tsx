@@ -4,30 +4,31 @@ import {
   FingerPrintIcon,
   LockClosedIcon,
 } from "@heroicons/react/24/outline";
+console.log("Hello from the other side")
 
 const features = [
   {
-    name: "Your data is never public",
+    name: "Sin trackers",
     description:
-      "The data you upload to our platform is never public. We ensure that your data is safe and never shared with anyone.",
+      "Los datos no son recompilados.",
     icon: CloudArrowUpIcon,
   },
   {
-    name: "Encrypted data",
+    name: "Sin letras pequeñas",
     description:
-      "Your data is encrypted and only you can access it. We never have readable access to your data.",
+      "Transparencia total en transacciones.",
     icon: LockClosedIcon,
   },
   {
-    name: "Product's trace is only public to the end user",
+    name: "Descentralizado",
     description:
-      "QR codes are generated for each product. The information about your product can only be accessed by these codes.",
+      "Datos más seguros, accesibles, más rápidos y eficientes.",
     icon: ArrowPathIcon,
   },
   {
-    name: "Secure authentication",
+    name: "Confidencialidad total",
     description:
-      "Our procedures are designed to ensure that your data is secure. Web3 authentication is used to ensure that only you can access your data.",
+      "Encriptación de datos y transacciones de extremo a extremo. ",
     icon: FingerPrintIcon,
   },
 ];
@@ -62,14 +63,13 @@ export default function Example() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-indigo-600">
-            Secured data
+            Datos descentralizados
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tight text-gray-100 sm:text-4xl">
-            We take security seriously
+            Mayor privacidad, mayor seguridad, menor dependencia de terceros.
           </p>
           <p className="mt-6 text-lg leading-8 text-gray-300">
-            Our platform is built with security in mind. We use the latest
-            technologies to ensure your data is safe.
+            Gracias a la blockchain, tus datos son solo tuyos.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">

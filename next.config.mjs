@@ -18,5 +18,8 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    domains: ["api.shyft.to", "elcomercio.pe"],
+  },
 };
 export default config;

@@ -18,8 +18,11 @@ const activityItems = [
 const aside: FC = ({}) => {
   return (
     <>
-      <aside className="bg-black/10 lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5">
-        <header className="flex items-center justify-between border-b border-white/5  px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+      <aside className="bg-black/10  lg:fixed lg:bottom-0 lg:right-0 lg:top-16 lg:w-96 lg:overflow-y-auto lg:border-l lg:border-white/5">
+        <div className="absolute flex w-full items-center justify-center text-gray-100">
+          <h5 className="mt-8 text-lg font-bold">Coming soon...</h5>
+        </div>
+        <header className="flex items-center justify-between border-b border-white/5 px-4  py-4 blur-sm sm:px-6 sm:py-6 lg:px-8">
           <h2 className="mb-[.22rem] text-base font-semibold leading-7 text-white">
             Trace feed
           </h2>
@@ -30,7 +33,7 @@ const aside: FC = ({}) => {
             View all
           </a>
         </header>
-        <ul role="list" className="divide-y divide-white/5">
+        <ul role="list" className="divide-y divide-white/5 blur-sm">
           {activityItems.map((item) => (
             <li key={item.commit} className="px-4 py-4 sm:px-6 lg:px-8">
               <div className="flex items-center gap-x-3">

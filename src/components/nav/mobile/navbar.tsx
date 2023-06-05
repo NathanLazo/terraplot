@@ -109,7 +109,7 @@ const Navbar: FC<navbarProps> = ({ solutions }) => {
               <Popover.Button
                 onClick={() => {
                   void (async () => {
-                    await router.push("/marketplace");
+                    await router.push("/profile/index");
                   })();
                 }}
                 className="text-left text-base  font-medium text-gray-300 hover:text-gray-100"
@@ -119,7 +119,7 @@ const Navbar: FC<navbarProps> = ({ solutions }) => {
               <Popover.Button
                 onClick={() => {
                   void (async () => {
-                    await router.push("/marketplace");
+                    await router.push("/profile/settings");
                   })();
                 }}
                 className="text-left text-base  font-medium text-gray-300 hover:text-gray-100"

@@ -40,19 +40,22 @@ model Session {
 }
 
 model User {
-    id             String    @id @default(cuid())
-    name           String
-    user           String?
-    wallet         String    @unique
-    walletVerified DateTime?
-    image          String?
-    password       String?
-    accounts       Account[]
-    sessions       Session[]
-    isAdmin        Boolean   @default(false)
-    TyC            Boolean
-    createdAt      DateTime  @default(now())
-    updatedAt      DateTime  @updatedAt
+    id              String            @id @default(cuid())
+    name            String
+    user            String?
+    wallet          String            @unique
+    walletVerified  DateTime?
+    image           String?
+    password        String?
+    accounts        Account[]
+    sessions        Session[]
+    isAdmin         Boolean           @default(false)
+    TyC             Boolean
+    createdAt       DateTime          @default(now())
+    updatedAt       DateTime          @updatedAt
+    Producer        Producer[]
+    Product         Product[]
+    ProfileSettings ProfileSettings[]
 }
 
 model VerificationToken {
@@ -77,4 +80,46 @@ model Contact {
     phone   String
     message String
     TyC     Boolean
+}
+
+model Producer {
+    id        String   @id @default(cuid())
+    address   String
+    city      String
+    state     String
+    zip       String
+    country   String
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Product {
+    id          String   @id @default(cuid())
+    name        String
+    description String
+    image       String   @db.VarChar(255)
+    price       Float
+    hash        String
+    userId      String
+    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+}
+
+model ProfileSettings {
+    id        String   @id @default(cuid())
+    name      String
+    lastName  String
+    curp      String
+    address   String
+    city      String
+    state     String
+    zip       Int
+    country   String
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }

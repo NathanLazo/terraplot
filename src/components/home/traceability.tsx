@@ -12,39 +12,39 @@ import Image from "next/image";
 
 const features = [
   {
-    name: "Real-time data.",
+    name: "Trazabilidad en tiempo real.",
     description:
-      "You can use our platform to get real-time data from your business.",
+      "Podrás saber en todo tiempo lo que está pasando en tus parcelas.",
     icon: CloudArrowUpIcon,
   },
   {
-    name: "SSL certificates.",
+    name: "Blockchain.",
     description:
-      "Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.",
+      "Datos inmutables, seguros y confiables.",
     icon: LockClosedIcon,
   },
   {
-    name: "Simple queues.",
+    name: "Comisiones bajas.",
     description:
-      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus.",
+      "Disfruta de las comisiones por transacción más bajas del mercado.",
     icon: ArrowPathIcon,
   },
   {
-    name: "Advanced security.",
+    name: "Fácil de usar.", 
     description:
-      "Lorem ipsum, dolor sit amet consectetur adipisicing elit aute id magna.",
+      "no necesitas ser un experto para usar TerraPlot.",
     icon: FingerPrintIcon,
   },
   {
-    name: "Powerful API.",
+    name: "Inversiones seguras.",
     description:
-      "Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo.",
+    "Tus inversiones estarán seguras y respaldadas por la tecnología blockchain.",
     icon: Cog6ToothIcon,
   },
   {
-    name: "Database backups.",
+    name: "Valor agregado",
     description:
-      "Ac tincidunt sapien vehicula erat auctor pellentesque rhoncus. ",
+      " Tus parcelas tendrán más valor al ser tokenizadas.",
     icon: ServerIcon,
   },
 ];
@@ -79,16 +79,14 @@ export default function Example() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-3xl sm:text-center">
           <p className="mb-6 mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Everything you need to deploy your app
+            Todo lo que necesitas 
           </p>
           <h2 className="text-base font-semibold leading-7 text-indigo-600">
-            Everything you need
+             A tu alcance
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl"></p>
           <p className="mt-6 text-lg leading-8 text-gray-300">
-            Welcome to the future of supply chain traceability! Introducing our
-            machine learning-powered traceability platform, the cutting-edge
-            solution for managing your business processes with blockchain.
+            Bienvenido a la nueva forma de hacer crecer tu patrimonio. Con Terraplot, tienes las facilidades para hacer crecer tus bienes de forma segura y confiable. &nbsp;
           </p>
         </div>
       </div>

@@ -1,29 +1,32 @@
+// Types
 import type { FC } from "react";
+
+// UI
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  ChartBarSquareIcon,
-  Cog6ToothIcon,
-  FolderIcon,
-  GlobeAltIcon,
-  ServerIcon,
-  SignalIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { ServerIcon, XMarkIcon } from "@heroicons/react/24/outline";
+
+// Utils
+import Link from "next/link";
+import Avatar from "boring-avatars";
+
+// Auth
+import { useSession } from "next-auth/react";
+
+// Images
+import Image from "next/image";
+import logo from "@images/logos/Terraplot.png";
 
 interface mobileNavProps {
   sidebarOpen: boolean;
   setSidebarOpen: (value: boolean) => void;
 }
 
-const mobileNav: FC<mobileNavProps> = ({ sidebarOpen, setSidebarOpen }) => {
+const MobileNav: FC<mobileNavProps> = ({ sidebarOpen, setSidebarOpen }) => {
+  const { data: session } = useSession();
+
   const navigation = [
-    { name: "Projects", href: "#", icon: FolderIcon, current: false },
     { name: "Deployments", href: "#", icon: ServerIcon, current: true },
-    { name: "Activity", href: "#", icon: SignalIcon, current: false },
-    { name: "Domains", href: "#", icon: GlobeAltIcon, current: false },
-    { name: "Usage", href: "#", icon: ChartBarSquareIcon, current: false },
-    { name: "Settings", href: "#", icon: Cog6ToothIcon, current: false },
   ];
 
   function classNames(...classes: string[]) {
@@ -47,7 +50,7 @@ const mobileNav: FC<mobileNavProps> = ({ sidebarOpen, setSidebarOpen }) => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-gray-900/80" />
+            <div className="fixed inset-0 bg-zinc-900/80" />
           </Transition.Child>
 
           <div className="fixed inset-0 flex">
@@ -85,14 +88,17 @@ const mobileNav: FC<mobileNavProps> = ({ sidebarOpen, setSidebarOpen }) => {
                   </div>
                 </Transition.Child>
                 {/* Sidebar component, swap this element with another sidebar if you like */}
-                <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 ring-1 ring-white/10">
-                  <div className="flex h-16 shrink-0 items-center">
-                    <img
+                <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-zinc-900 px-6 ring-1 ring-white/10">
+                  <Link
+                    href="/marketplace"
+                    className="flex h-16 shrink-0 items-center"
+                  >
+                    <Image
                       className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                      src={logo}
                       alt="Your Company"
                     />
-                  </div>
+                  </Link>
                   <nav className="flex flex-1 flex-col">
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
                       <li>
@@ -103,8 +109,8 @@ const mobileNav: FC<mobileNavProps> = ({ sidebarOpen, setSidebarOpen }) => {
                                 href={item.href}
                                 className={classNames(
                                   item.current
-                                    ? "bg-gray-800 text-white"
-                                    : "text-gray-400 hover:bg-gray-800 hover:text-white",
+                                    ? "bg-zinc-800 text-white"
+                                    : "text-zinc-400 hover:bg-zinc-800 hover:text-white",
                                   "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
                                 )}
                               >
@@ -119,18 +125,25 @@ const mobileNav: FC<mobileNavProps> = ({ sidebarOpen, setSidebarOpen }) => {
                         </ul>
                       </li>
                       <li className="-mx-6 mt-auto">
-                        <a
-                          href="#"
-                          className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-gray-800"
+                        <Link
+                          href="/profile/settings"
+                          className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-zinc-800"
                         >
-                          <img
-                            className="h-8 w-8 rounded-full bg-gray-800"
-                            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                            alt=""
+                          <Avatar
+                            size={32}
+                            name={session?.user.name as string}
+                            variant="beam"
+                            colors={[
+                              "#2C3639",
+                              "#A2A378",
+                              "#E5F9DB",
+                              "#83764F",
+                              "#A0D8B3",
+                            ]}
                           />
                           <span className="sr-only">Your profile</span>
-                          <span aria-hidden="true">Tom Cook</span>
-                        </a>
+                          <span aria-hidden="true">{session?.user.name}</span>
+                        </Link>
                       </li>
                     </ul>
                   </nav>
@@ -143,4 +156,4 @@ const mobileNav: FC<mobileNavProps> = ({ sidebarOpen, setSidebarOpen }) => {
     </>
   );
 };
-export default mobileNav;
+export default MobileNav;
