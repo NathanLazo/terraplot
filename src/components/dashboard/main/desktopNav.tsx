@@ -1,9 +1,12 @@
+// Types
 import type { FC } from "react";
 
+// Icons
 import { ServerIcon } from "@heroicons/react/24/outline";
 
 // Utils
 import Avatar from "boring-avatars";
+import Link from "next/link";
 
 // Auth
 import { useSession } from "next-auth/react";
@@ -31,9 +34,9 @@ const DesktopNav: FC /*<desktopNavProps>*/ = ({}) => {
       <div className="hidden xl:fixed xl:inset-y-0 xl:z-50 xl:flex xl:w-72 xl:flex-col">
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-black/10 px-6 ring-1 ring-white/5">
-          <div className="flex h-16 shrink-0 items-center">
+          <Link href="/marketplace" className="flex h-16 shrink-0 items-center">
             <Image className="h-8 w-auto" src={logo} alt="Your Company" />
-          </div>
+          </Link>
           <nav className="flex flex-1 flex-col">
             <ul role="list" className="flex flex-1 flex-col gap-y-7">
               <li>

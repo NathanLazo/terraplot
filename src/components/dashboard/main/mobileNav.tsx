@@ -13,6 +13,10 @@ import Avatar from "boring-avatars";
 // Auth
 import { useSession } from "next-auth/react";
 
+// Images
+import Image from "next/image";
+import logo from "@images/logos/Terraplot.png";
+
 interface mobileNavProps {
   sidebarOpen: boolean;
   setSidebarOpen: (value: boolean) => void;
@@ -85,13 +89,16 @@ const MobileNav: FC<mobileNavProps> = ({ sidebarOpen, setSidebarOpen }) => {
                 </Transition.Child>
                 {/* Sidebar component, swap this element with another sidebar if you like */}
                 <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-zinc-900 px-6 ring-1 ring-white/10">
-                  <div className="flex h-16 shrink-0 items-center">
-                    <img
+                  <Link
+                    href="/marketplace"
+                    className="flex h-16 shrink-0 items-center"
+                  >
+                    <Image
                       className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                      src={logo}
                       alt="Your Company"
                     />
-                  </div>
+                  </Link>
                   <nav className="flex flex-1 flex-col">
                     <ul role="list" className="flex flex-1 flex-col gap-y-7">
                       <li>
