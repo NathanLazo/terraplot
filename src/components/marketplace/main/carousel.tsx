@@ -95,7 +95,7 @@ const Carousel: FC<{
                     <div className="absolute inset-0 -z-10 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
 
                     <div className="flex flex-wrap items-center gap-y-1 overflow-hidden text-sm leading-6 text-gray-300">
-                      <time className="mr-8">{product.price}SOL</time>
+                      <time className="mr-8">{product.name}</time>
                       <div className="-ml-4 flex items-center gap-x-4">
                         <svg
                           viewBox="0 0 2 2"
@@ -103,7 +103,7 @@ const Carousel: FC<{
                         >
                           <circle cx={1} cy={1} r={1} />
                         </svg>
-                        <div className="flex gap-x-2.5">{product.name}</div>
+                        <div className="flex gap-x-2.5">{product.price}SOL</div>
                       </div>
                     </div>
                     <h3 className="mt-3 text-lg font-semibold leading-6 text-white">
