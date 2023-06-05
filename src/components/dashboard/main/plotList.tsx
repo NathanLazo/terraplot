@@ -83,7 +83,7 @@ const PlotList: FC /*<plotListProps>*/ = ({}) => {
               id: nft?.mint as number,
               href: nft?.external_url as string,
               projectName: nft?.name as string,
-              teamName: nft?.owner as string,
+              teamName: nft?.mint as string,
               status: "online" as string,
               statusText: "up to date" as string,
               description: nft?.description as string,

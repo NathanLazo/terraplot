@@ -127,7 +127,7 @@ const CreateProduct: FC<createProductProps> = ({
     formData.append("wallet", session?.user?.wallet as string);
     formData.append("name", data.name);
     formData.append("symbol", "TPL");
-    formData.append("description", "Hi");
+    formData.append("description", data.description);
     formData.append("attributes", JSON.stringify(attrib));
     formData.append("external_url", "https://terraplot.lat");
     formData.append("max_supply", "0");
