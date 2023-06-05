@@ -10,6 +10,7 @@ import { api } from "~/utils/api";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { ClipboardIcon } from "@heroicons/react/24/outline";
 
 export default function Example() {
   // API
@@ -72,29 +73,46 @@ export default function Example() {
     <div className="md:py-15 mx-5 space-y-10 divide-y divide-gray-900/10 py-5 md:mx-20">
       <div className="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
         <div className="px-4 sm:px-0">
-          <h2 className="text-base font-semibold leading-7 text-gray-50">
+          <h2 className="text-base font-semibold leading-7 text-white">
             Profile
           </h2>
-          <p className="mt-1 text-sm leading-6 text-gray-500">
+          <p className="mt-1 text-sm leading-6 text-gray-300">
             This information will be displayed publicly so be careful what you
             share.
           </p>
         </div>
 
-        <div className="bg-gray-100 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
+        <div className="bg-gray-100 bg-opacity-10 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
           <div className="px-4 py-6 sm:p-8">
             <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-4">
                 <label
                   htmlFor="wallet"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-50"
                 >
                   Wallet
                 </label>
                 <div className="mt-2">
-                  <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                    <span className="flex select-none items-center pl-3 text-gray-500 sm:text-sm"></span>
-                    <p>{session?.user.wallet as string}</p>
+                  <div className="flex rounded-md font-extrabold text-indigo-600 shadow-2xl sm:max-w-md">
+                    <p className="overflow-hidden">
+                      {session?.user.wallet as string}
+                    </p>
+                    <button
+                      className="ml-2"
+                      onClick={() => {
+                        navigator.clipboard
+                          .writeText(session?.user.wallet as string)
+                          .then(() => {
+                            toast.success("Copied to clipboard");
+                          })
+                          .catch((er) => console.log(er));
+                      }}
+                    >
+                      <ClipboardIcon
+                        className="h-3 w-3 text-gray-400 hover:text-gray-50"
+                        aria-hidden="true"
+                      />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -102,7 +120,7 @@ export default function Example() {
               <div className="col-span-full">
                 <label
                   htmlFor="photo"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-50"
                 >
                   Photo
                 </label>
@@ -131,20 +149,20 @@ export default function Example() {
               <div className="col-span-full">
                 <label
                   htmlFor="cover-photo"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-50"
                 >
                   Cover photo
                 </label>
-                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900 px-6 py-10">
                   <div className="text-center">
                     <PhotoIcon
-                      className="mx-auto h-12 w-12 text-gray-300"
+                      className="mx-auto h-12 w-12 text-gray-200"
                       aria-hidden="true"
                     />
-                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                    <div className="mt-4 flex text-sm leading-6 text-gray-400">
                       <label
                         htmlFor="file-upload"
-                        className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                        className="relative cursor-pointer rounded-md  font-semibold text-gray-300"
                       >
                         <span>Upload a file</span>
                         <input
@@ -156,7 +174,7 @@ export default function Example() {
                       </label>
                       <p className="pl-1">or drag and drop</p>
                     </div>
-                    <p className="text-xs leading-5 text-gray-600">
+                    <p className="text-xs leading-5 text-gray-500">
                       PNG, JPG, GIF up to 10MB
                     </p>
                   </div>
@@ -167,7 +185,7 @@ export default function Example() {
           <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
             <button
               type="button"
-              className="text-sm font-semibold leading-6 text-gray-900"
+              className="text-sm font-semibold leading-6 text-gray-100"
             >
               Cancel
             </button>
@@ -192,7 +210,7 @@ export default function Example() {
         </div>
 
         <form
-          className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 "
+          className="bg-gray-100 bg-opacity-10 shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2 "
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
           onSubmit={handleSubmit(onSubmit)}
         >
@@ -201,7 +219,7 @@ export default function Example() {
               <div className="sm:col-span-3">
                 <label
                   htmlFor="first-name"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-50"
                 >
                   First name
                 </label>
@@ -219,7 +237,7 @@ export default function Example() {
               <div className="sm:col-span-3">
                 <label
                   htmlFor="last-name"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-50"
                 >
                   Last name
                 </label>
@@ -237,7 +255,7 @@ export default function Example() {
               <div className="sm:col-span-4">
                 <label
                   htmlFor="curp"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-50"
                 >
                   CURP
                 </label>
@@ -254,7 +272,7 @@ export default function Example() {
               <div className="sm:col-span-4">
                 <label
                   htmlFor="country"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-50"
                 >
                   Country
                 </label>
@@ -263,7 +281,7 @@ export default function Example() {
                     id="country"
                     {...register("country")}
                     autoComplete="country"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-black  shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                   >
                     <option>Mexico</option>
                     <option>United States</option>
@@ -275,7 +293,7 @@ export default function Example() {
               <div className="col-span-full">
                 <label
                   htmlFor="street-address"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-50"
                 >
                   Street address
                 </label>
@@ -293,7 +311,7 @@ export default function Example() {
               <div className="sm:col-span-2 sm:col-start-1">
                 <label
                   htmlFor="city"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-50"
                 >
                   City
                 </label>
@@ -311,7 +329,7 @@ export default function Example() {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="region"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-50"
                 >
                   State / Province
                 </label>
@@ -329,7 +347,7 @@ export default function Example() {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="zip"
-                  className="block text-sm font-medium leading-6 text-gray-900"
+                  className="block text-sm font-medium leading-6 text-gray-50"
                 >
                   ZIP / Postal code
                 </label>
@@ -348,7 +366,7 @@ export default function Example() {
           <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
             <button
               type="button"
-              className="text-sm font-semibold leading-6 text-gray-900"
+              className="text-sm font-semibold leading-6 text-gray-50"
             >
               Cancel
             </button>
