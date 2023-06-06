@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -14,23 +15,88 @@ import { useEffect } from "react";
 import Background from "./background";
 import Image from "next/image";
 
+// Web3
+// Web3
+import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
+import {
+  clusterApiUrl,
+  Connection,
+  Context,
+  PublicKey,
+  SignatureResult,
+} from "@solana/web3.js";
+import {
+  confirmTransactionFromBackend,
+  confirmTransactionFromFrontend,
+} from "../utils";
+
+async function signAndConfirmTransactionFe(
+  network: string | undefined,
+  transaction:
+    | WithImplicitCoercion<string>
+    | { [Symbol.toPrimitive](hint: "string"): string },
+  callback: {
+    (signature: any, result: any): void;
+    (signatureResult: SignatureResult, context: Context): void;
+  }
+) {
+  const phantom = new PhantomWalletAdapter();
+  await phantom.connect();
+  const rpcUrl = clusterApiUrl("devnet");
+  const connection = new Connection(rpcUrl, "confirmed");
+  const ret = await confirmTransactionFromFrontend(
+    connection,
+    transaction,
+    phantom
+  );
+  // const checks = await connection.confirmTransaction({signature:ret},'finalised');
+  console.log(ret);
+  // console.log(checks);
+  // await connection.confirmTransaction({
+  //     blockhash: transaction.blockhash,
+  //     signature: ret,
+  //   });
+  connection.onSignature(ret, callback, "finalized");
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return ret;
+}
+
 const Carousel: FC<{
   data: Product[];
 }> = ({ data }) => {
   const transferNft = (nftHash: string) => {
     const myHeaders = new Headers();
     myHeaders.append("x-api-key", "yuNXtSyS8hhVTdkn");
+    myHeaders.append("Content-Type", "application/json");
 
-    const raw = `{\n  "network": "devnet",\n  "token_address": "${nftHash}",\n  "from_address": "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",\n  "to_address": "2RQcJmb6iPqj9AXgrjh7RYu97RpucguHWPw7MJYGWYRr",\n  "transfer_authority": true\n}`;
+    const raw = JSON.stringify({
+      network: "devnet",
+      from_address: "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
+      to_address: "2RQcJmb6iPqj9AXgrjh7RYu97RpucguHWPw7MJYGWYRr",
+      token_address: "2ChuxGTZfvn5fMgP56bnbKC7N7j8dgbe1oKzaTZNVfGB",
+      amount: 50,
+      fee_payer: "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
+    });
 
-    fetch("https://api.shyft.to/sol/v1/nft/transfer_detach", {
+    fetch("https://api.shyft.to/sol/v1/token/transfer_detach", {
       method: "POST",
       headers: myHeaders,
       body: raw,
       redirect: "follow",
     })
-      .then((response) => response.text())
-      .then((result) => console.log(result))
+      .then(async (res) => {
+        if (res.data.success === true) {
+          const transaction = res.data.result.encoded_transaction;
+          const res_trac = await signAndConfirmTransactionFe(
+            "devnet",
+            transaction,
+            () => {
+              console.log("transaction confirmed");
+            }
+          );
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        }
+      })
       .catch((error) => console.log("error", error));
   };
 
