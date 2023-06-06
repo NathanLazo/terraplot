@@ -31,6 +31,8 @@ import {
   confirmTransactionFromFrontend,
 } from "../utils";
 
+import { useSession } from "next-auth/react";
+
 async function signAndConfirmTransactionFe(
   network: string | undefined,
   transaction:
@@ -65,6 +67,8 @@ async function signAndConfirmTransactionFe(
 const Carousel: FC<{
   data: Product[];
 }> = ({ data }) => {
+  const { data: session } = useSession();
+
   const transferNft = (nftHash: string) => {
     const myHeaders = new Headers();
     myHeaders.append("x-api-key", "");
@@ -73,8 +77,8 @@ const Carousel: FC<{
     const raw = JSON.stringify({
       network: "devnet",
       from_address: "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
-      to_address: session,
-      token_address: nftHash,
+      to_address: session?.user.wallet as string,
+      token_address: "2ChuxGTZfvn5fMgP56bnbKC7N7j8dgbe1oKzaTZNVfGB",
       amount: 50,
       fee_payer: "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
     });
