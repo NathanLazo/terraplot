@@ -70,17 +70,12 @@ const Carousel: FC<{
   const { data: session } = useSession();
 
   const transferNft = (nftHash: string) => {
-    const myHeaders = new Headers();
-    myHeaders.append("x-api-key", "");
-    myHeaders.append("Content-Type", "");
-
     const raw = JSON.stringify({
       network: "devnet",
       from_address: "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
-      to_address: session?.user.wallet as string,
+      to_address: "2RQcJmb6iPqj9AXgrjh7RYu97RpucguHWPw7MJYGWYRr",
       token_address: "2ChuxGTZfvn5fMgP56bnbKC7N7j8dgbe1oKzaTZNVfGB",
-      amount: 50,
-      fee_payer: "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
+      amount: 1,
     });
 
     const signPromise = new Promise((resolve, reject) => {
