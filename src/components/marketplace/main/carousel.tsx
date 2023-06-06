@@ -10,12 +10,13 @@ import { type FC } from "react";
 
 // Utils
 import { useEffect } from "react";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 // Components
 import Background from "./background";
 import Image from "next/image";
 
-// Web3
 // Web3
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 import {
@@ -66,38 +67,54 @@ const Carousel: FC<{
 }> = ({ data }) => {
   const transferNft = (nftHash: string) => {
     const myHeaders = new Headers();
-    myHeaders.append("x-api-key", "yuNXtSyS8hhVTdkn");
-    myHeaders.append("Content-Type", "application/json");
+    myHeaders.append("x-api-key", "");
+    myHeaders.append("Content-Type", "");
 
     const raw = JSON.stringify({
       network: "devnet",
       from_address: "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
-      to_address: "2RQcJmb6iPqj9AXgrjh7RYu97RpucguHWPw7MJYGWYRr",
-      token_address: "2ChuxGTZfvn5fMgP56bnbKC7N7j8dgbe1oKzaTZNVfGB",
+      to_address: session,
+      token_address: nftHash,
       amount: 50,
       fee_payer: "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
     });
 
-    fetch("https://api.shyft.to/sol/v1/token/transfer_detach", {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow",
-    })
-      .then(async (res) => {
-        if (res.data.success === true) {
-          const transaction = res.data.result.encoded_transaction;
-          const res_trac = await signAndConfirmTransactionFe(
-            "devnet",
-            transaction,
-            () => {
-              console.log("transaction confirmed");
-            }
-          );
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        }
+    const signPromise = new Promise((resolve, reject) => {
+      axios({
+        // Endpoint to send files
+        url: "https://api.shyft.to/sol/v1/token/transfer_detach",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": "yuNXtSyS8hhVTdkn",
+          Accept: "*/*",
+          "Access-Control-Allow-Origin": "*",
+        },
+
+        data: raw,
       })
-      .catch((error) => console.log("error", error));
+        .then(async (res) => {
+          if (res.data.success === true) {
+            const transaction = res.data.result.encoded_transaction;
+            const res_trac: string = await signAndConfirmTransactionFe(
+              "devnet",
+              transaction,
+              () => {
+                resolve("success: " + res_trac);
+              }
+            );
+          }
+        })
+        .catch((err) => reject(err));
+    });
+
+    toast
+      .promise(signPromise, {
+        loading: "Buying NFT...",
+        success: "Thank you for your purchase!",
+        error: "Error!!!! please try again later",
+      })
+      .catch((err) => console.log(err));
   };
 
   useEffect(() => {
