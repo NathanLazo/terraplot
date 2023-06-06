@@ -6,7 +6,7 @@ const Auth: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Tlachia - register</title>
+        <title>Terraplot - register</title>
       </Head>
       <AuthContainer />
     </>
