@@ -162,21 +162,20 @@ const CreateProduct: FC<createProductProps> = ({
             );
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return {
-              nftAddress: res_trac,
               image:
                 "https://elcomercio.pe/resizer/LpZzj1EzHef9zns5HQCJ2bziEOo=/580x330/smart/filters:format(jpeg):quality(75)/cloudfront-us-east-1.images.arcpublishing.com/elcomercio/P6XLSB3NANECJKXO6Q7APHPBHU.jpg",
             };
           }
         })
         // @ts-expect-error - just any values
-        .then(({ nftAddress, image }) => {
+        .then(({ image }) => {
           productsMutation
             .mutateAsync({
               name: data.name,
               description: data.description,
               price: +data.price,
               image: image as string,
-              hash: nftAddress as string,
+              hash: session?.user.wallet as string,
               userId: session?.user?.id as string,
             })
             .catch((err) => {

@@ -72,8 +72,8 @@ const Carousel: FC<{
   const transferNft = (nftHash: string) => {
     const raw = JSON.stringify({
       network: "devnet",
-      from_address: "3W5SK5geeY1VU1Gd79zovxgcCiMGe4JTudZtXpfkLS2Y",
-      to_address: "2RQcJmb6iPqj9AXgrjh7RYu97RpucguHWPw7MJYGWYRr",
+      from_address: nftHash,
+      to_address: session?.user.wallet as string,
       token_address: "2ChuxGTZfvn5fMgP56bnbKC7N7j8dgbe1oKzaTZNVfGB",
       amount: 1,
     });
