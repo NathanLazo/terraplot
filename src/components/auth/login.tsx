@@ -66,7 +66,7 @@ const Auth: FC = () => {
         error: "Sign in failed!",
       })
       .then(async () => {
-        await router.push("/marketplace");
+        await router.push("/dashboard");
       })
       .catch((error) => {
         console.log(error);
