@@ -12,13 +12,14 @@ import {
 // Components
 import DesktopNav from "@components/nav/desktop/navbar";
 import MobileNav from "@components/nav/mobile/navbar";
+import Producers from "@components/solutions/producers";
 
 const solutions = [
   {
     name: "Producers",
     description:
       "If you're a producer, we can help you get your product to market",
-    href: "/producer",
+    href: "/solutions/producers",	
     icon: TruckIcon,
   },
   {
